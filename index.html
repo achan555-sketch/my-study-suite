@@ -3,205 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 achan's Princess Planner v10 🎀</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <title>🎀 achan's Focus One 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap');
         :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding-bottom: 100px; display: flex; justify-content: center; }
-        .wrapper { width: 95%; max-width: 500px; }
+        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .wrapper { width: 100%; max-width: 400px; text-align: center; }
         
-        /* Navigation */
-        .bottom-nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: white; width: 90%; border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 10px 30px rgba(251, 111, 146, 0.3); z-index: 1000; }
-        .nav-item { border: none; background: none; color: var(--p-main); font-weight: 700; cursor: pointer; font-size: 0.75rem; font-family: 'Quicksand'; }
-        .nav-item.active { color: var(--p-dark); text-decoration: underline; text-underline-offset: 4px; }
+        /* Ribbon & Title */
+        .ribbon { font-size: 2.5rem; animation: float 3s infinite ease-in-out; display: inline-block; }
+        @keyframes float { 50% { transform: translateY(-10px); } }
+        h1 { font-size: 1.4rem; color: var(--p-dark); margin: 10px 0; letter-spacing: 1px; }
 
-        .view-content { display: none; padding-top: 20px; }
-        .view-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
-        /* Elegant Cards */
-        .card { background: white; border-radius: 30px; padding: 20px; box-shadow: 0 10px 25px rgba(255, 143, 171, 0.1); margin-bottom: 20px; border: 2px solid white; position: relative; }
-        .exam-title { font-size: 1.2rem; font-weight: 700; color: var(--p-dark); margin: 0; }
-        .badge { background: var(--p-light); color: var(--p-dark); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
-
-        /* Gantt-style Timeline */
-        .gantt-row { margin: 15px 0; }
-        .gantt-track { background: var(--p-light); height: 25px; border-radius: 15px; position: relative; overflow: hidden; border: 1px solid #fff; }
-        .gantt-fill { background: linear-gradient(90deg, var(--p-main), var(--p-dark)); height: 100%; transition: 1s; }
-        .today-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: white; border-left: 2px dashed var(--p-dark); z-index: 2; }
-
-        /* Tasks */
-        .task-box { background: #fffcfd; border: 2px solid var(--p-light); border-radius: 20px; padding: 15px; margin-top: 15px; position: relative; }
-        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .remove-task { color: #ccc; cursor: pointer; font-size: 0.8rem; border: none; background: none; }
-        .remove-task:hover { color: var(--p-dark); }
+        /* Master Card */
+        .main-card { background: white; border-radius: 40px; padding: 30px; box-shadow: 0 20px 40px rgba(251, 111, 146, 0.15); border: 4px solid white; }
         
-        .log-input-group { display: flex; gap: 8px; align-items: center; }
-        .input-mini { width: 60px; padding: 8px; border: 2px solid var(--p-light); border-radius: 12px; text-align: center; font-family: 'Quicksand'; font-weight: 700; color: var(--p-dark); outline: none; }
-        .btn-log { background: var(--p-dark); color: white; border: none; padding: 8px 15px; border-radius: 12px; font-weight: 700; cursor: pointer; flex-grow: 1; font-size: 0.8rem; }
+        .days-left { font-size: 4.5rem; font-weight: 700; color: var(--p-dark); line-height: 1; margin: 10px 0; }
+        .progress-label { font-size: 0.9rem; font-weight: 700; margin-top: 20px; display: flex; justify-content: space-between; }
+        .bar-outer { background: var(--p-light); height: 20px; border-radius: 10px; overflow: hidden; margin-top: 8px; border: 2px solid white; }
+        .bar-inner { background: linear-gradient(90deg, var(--p-main), var(--p-dark)); height: 100%; transition: 1.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
 
-        .add-zone { background: white; border-radius: 30px; padding: 25px; border: 3px solid var(--p-light); }
-        input[type="text"], .date-input { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--p-light); margin-bottom: 10px; font-family: 'Quicksand'; box-sizing: border-box; outline: none; }
+        /* Task Action Area */
+        .task-grid { margin-top: 30px; display: grid; gap: 15px; }
+        .task-row { background: #fffcfd; padding: 15px; border-radius: 25px; border: 2px dashed var(--p-main); }
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-add { background: var(--p-dark); color: white; border: none; padding: 10px; border-radius: 15px; font-weight: 700; flex-grow: 1; cursor: pointer; }
+        .input-num { width: 60px; border: 2px solid var(--p-light); border-radius: 12px; text-align: center; font-family: 'Quicksand'; font-weight: 700; color: var(--p-dark); }
+
+        /* Reward & History */
+        .footer-info { margin-top: 25px; font-size: 0.8rem; color: var(--p-main); font-weight: 700; }
+        .undo-link { font-size: 0.7rem; color: #ccc; cursor: pointer; text-decoration: underline; margin-top: 20px; display: block; }
+        
+        /* Setting Trigger */
+        .settings-btn { position: fixed; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.3; }
+        .settings-panel { display: none; background: white; padding: 20px; border-radius: 20px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <header style="text-align:center;"><span style="font-size:2rem;">🎀</span><h1>Princess Planner</h1></header>
+    <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+    <div class="ribbon">🎀</div>
+    <h1 id="display-name">My Mission</h1>
 
-    <div id="view-goals" class="view-content active">
-        <div id="dashboard"></div>
-        <div class="add-zone">
-            <h3 style="text-align:center; color:var(--p-dark); margin:0 0 15px;">✨ New Subject ✨</h3>
-            <input type="text" id="new-name" placeholder="Exam/Subject Name">
-            <input type="text" id="new-date" class="date-input" placeholder="Select Deadline">
-            <button class="btn-log" style="width:100%; padding:15px; font-size:1rem;" onclick="addProject()">Create 🎀</button>
+    <div class="main-card">
+        <div class="days-left" id="days-display">00</div>
+        <div style="font-size: 0.7rem; letter-spacing: 3px; opacity: 0.6;">DAYS TO GO</div>
+
+        <div class="progress-label">
+            <span>Overall Progress</span>
+            <span id="percent-display">0%</span>
+        </div>
+        <div class="bar-outer"><div class="bar-inner" id="bar-fill"></div></div>
+
+        <div class="task-grid" id="task-area"></div>
+
+        <div class="footer-info">
+            🎁 Reward: <span id="reward-display">Treat yourself!</span>
+            <br><span id="last-log" style="font-size: 0.7rem; opacity: 0.7;">No entries yet today ✨</span>
         </div>
     </div>
 
-    <div id="view-planner" class="view-content">
-        <h2 style="text-align:center; color:var(--p-dark);">🗓 Visual Timeline</h2>
-        <div id="planner-list"></div>
-    </div>
+    <span class="undo-link" onclick="undo()">⤺ Mistake? Undo last entry</span>
 
-    <div id="view-history" class="view-content">
-        <div class="card">
-            <h2 style="color:var(--p-dark);">📜 Study History</h2>
-            <div id="history-list" style="max-height: 400px; overflow-y: auto;"></div>
-        </div>
+    <div id="settings" class="settings-panel">
+        <input type="text" id="set-name" placeholder="Subject Name" style="width:100%; margin-bottom:10px;">
+        <input type="date" id="set-date" style="width:100%; margin-bottom:10px;">
+        <input type="text" id="set-reward" placeholder="Reward" style="width:100%; margin-bottom:10px;">
+        <button class="btn-add" onclick="saveSettings()">Save & Close</button>
     </div>
-
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('view-goals')">TASKS</button>
-        <button class="nav-item" onclick="switchTab('view-planner')">PLANNER</button>
-        <button class="nav-item" onclick="switchTab('view-history')">LOG</button>
-    </nav>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
 <script>
-    flatpickr(".date-input", { dateFormat: "Y-m-d", minDate: "today", disableMobile: true });
-
-    let data = JSON.parse(localStorage.getItem('achan_v10')) || { projects: [], logs: [] };
+    let state = JSON.parse(localStorage.getItem('achan_focus_v11')) || {
+        name: "Boki Level 2", date: "2026-01-09", reward: "Special Dessert 🍰",
+        tasks: [{ id: 1, name: "Practice MCQ", current: 0, goal: 100 }, { id: 2, name: "Lessons", current: 0, goal: 10 }],
+        history: []
+    };
 
     function save() {
-        localStorage.setItem('achan_v10', JSON.stringify(data));
+        localStorage.setItem('achan_focus_v11', JSON.stringify(state));
         render();
     }
 
-    function switchTab(id) {
-        document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.currentTarget.classList.add('active');
-        if(id === 'view-planner') renderPlanner();
-        if(id === 'view-history') renderHistory();
-    }
-
-    function addProject() {
-        const name = document.getElementById('new-name').value;
-        const date = document.getElementById('new-date').value;
-        if (!name || !date) return alert("Fill in everything! 🌸");
-        data.projects.push({ 
-            id: Date.now(), 
-            name, date, 
-            created: new Date().toISOString().split('T')[0],
-            tasks: [{ id: 1, name: "Practice MCQ", current: 0, goal: 100 }, { id: 2, name: "Lessons", current: 0, goal: 10 }] 
-        });
-        save();
-        document.getElementById('new-name').value = '';
-    }
-
-    function logProgress(pId, tId) {
-        const input = document.getElementById(`log-${pId}-${tId}`);
+    function log(tId) {
+        const input = document.getElementById(`in-${tId}`);
         const val = parseInt(input.value) || 0;
         if (val <= 0) return;
-        const p = data.projects.find(x => x.id === pId);
-        const t = p.tasks.find(x => x.id === tId);
+
+        state.history.push(JSON.parse(JSON.stringify(state))); // バックアップ
+        const t = state.tasks.find(x => x.id === tId);
         t.current = Math.min(t.goal, t.current + val);
-        data.logs.unshift({ date: new Date().toLocaleDateString(), subject: p.name, task: t.name, amount: val });
+        
         input.value = '';
         if (t.current === t.goal) confetti({ particleCount: 150, spread: 70, colors: ['#ff8fab', '#fb6f92'] });
         save();
     }
 
-    function removeTask(pId, tId) {
-        const p = data.projects.find(x => x.id === pId);
-        p.tasks = p.tasks.filter(x => x.id !== tId);
-        save();
-    }
-
-    function deleteProject(id) {
-        if (confirm("Delete this subject? 🌸")) {
-            data.projects = data.projects.filter(x => x.id !== id);
+    function undo() {
+        if (state.history.length > 0) {
+            state = state.history.pop();
             save();
         }
     }
 
-    function renderHistory() {
-        const list = document.getElementById('history-list');
-        list.innerHTML = data.logs.length ? '' : 'No logs yet... 🌸';
-        data.logs.forEach(l => {
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px dashed var(--p-light); font-size:0.8rem;"><span><b>${l.date}</b> ${l.subject} (${l.task})</span><span>+${l.amount}</span></div>`;
-        });
+    function toggleSettings() {
+        const s = document.getElementById('settings');
+        s.style.display = s.style.display === 'block' ? 'none' : 'block';
     }
 
-    function renderPlanner() {
-        const list = document.getElementById('planner-list');
-        list.innerHTML = '';
-        data.projects.forEach(p => {
-            const totalCur = p.tasks.reduce((s, t) => s + t.current, 0);
-            const totalGoal = p.tasks.reduce((s, t) => s + t.goal, 0);
-            const progress = totalGoal > 0 ? Math.round((totalCur / totalGoal) * 100) : 0;
-            const daysLeft = Math.max(0, Math.ceil((new Date(p.date) - new Date()) / 86400000));
-            
-            list.innerHTML += `<div class="card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-weight:700; color:var(--p-dark);">${p.name}</span>
-                    <span class="badge">${progress}% Progress</span>
-                </div>
-                <div class="gantt-track">
-                    <div class="gantt-fill" style="width: ${progress}%"></div>
-                </div>
-                <p style="font-size:0.7rem; text-align:right; margin-top:5px; opacity:0.6;">✨ ${daysLeft} Days to Deadline</p>
-            </div>`;
-        });
+    function saveSettings() {
+        state.name = document.getElementById('set-name').value || state.name;
+        state.date = document.getElementById('set-date').value || state.date;
+        state.reward = document.getElementById('set-reward').value || state.reward;
+        save();
+        toggleSettings();
     }
 
     function render() {
-        const dash = document.getElementById('dashboard');
-        dash.innerHTML = '';
-        data.projects.forEach(p => {
-            let tHtml = '';
-            p.tasks.forEach(t => {
-                tHtml += `<div class="task-box">
-                    <div class="task-header">
-                        <span style="font-weight:700; font-size:0.85rem;">${t.name}</span>
-                        <button class="remove-task" onclick="removeTask(${p.id}, ${t.id})">✕ remove</button>
+        document.getElementById('display-name').innerText = state.name;
+        document.getElementById('reward-display').innerText = state.reward;
+        
+        const diff = Math.ceil((new Date(state.date) - new Date()) / 86400000);
+        document.getElementById('days-display').innerText = Math.max(0, diff);
+
+        let curAll = 0, goalAll = 0;
+        const area = document.getElementById('task-area');
+        area.innerHTML = '';
+
+        state.tasks.forEach(t => {
+            curAll += t.current; goalAll += t.goal;
+            area.innerHTML += `
+                <div class="task-row">
+                    <div style="font-weight:700; font-size:0.8rem; display:flex; justify-content:space-between;">
+                        <span>${t.name}</span>
+                        <span>${t.current}/${t.goal}</span>
                     </div>
-                    <div class="log-input-group">
-                        <input type="number" id="log-${p.id}-${t.id}" class="input-mini" placeholder="+0">
-                        <button class="btn-log" onclick="logProgress(${p.id}, ${t.id})">Log Progress</button>
+                    <div class="btn-group">
+                        <input type="number" id="in-${t.id}" class="input-num" placeholder="+0">
+                        <button class="btn-add" onclick="log(${t.id})">Add Progress</button>
                     </div>
-                    <div style="font-size:0.7rem; margin-top:8px; opacity:0.6;">Current: ${t.current} / ${t.goal}</div>
                 </div>`;
-            });
-            dash.innerHTML += `<div class="card">
-                <div style="display:flex; justify-content:space-between;">
-                    <span class="exam-title">${p.name}</span>
-                    <button onclick="deleteProject(${p.id})" style="background:none; border:none; color:#ccc; font-size:0.7rem; cursor:pointer;">delete project</button>
-                </div>
-                ${tHtml}
-                <button class="btn-log" style="margin-top:15px; background:var(--p-light); color:var(--p-dark); font-size:0.7rem; width:auto; padding:5px 15px;" onclick="const n=prompt('Task Name?'); const g=prompt('Goal Number?'); if(n&&g){p.tasks.push({id:Date.now(), name:n, current:0, goal:parseInt(g)}); save();}">+ Add Task</button>
-            </div>`;
         });
+
+        const p = goalAll > 0 ? Math.round((curAll / goalAll) * 100) : 0;
+        document.getElementById('percent-display').innerText = p + "%";
+        document.getElementById('bar-fill').style.width = p + "%";
     }
 
-    window.onload = () => { render(); };
+    window.onload = () => {
+        document.getElementById('set-name').value = state.name;
+        document.getElementById('set-date').value = state.date;
+        document.getElementById('set-reward').value = state.reward;
+        render();
+    };
 </script>
 </body>
 </html>
