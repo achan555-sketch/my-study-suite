@@ -3,39 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 Pinky Trade School v8 🎀</title>
+    <title>🎀 Pinky Trade School: Focus 5M v10 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500&display=swap');
         :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; --ask: #ff4757; --bid: #2ed573; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
         .wrapper { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 10px; }
         
-        /* 4-Chart Grid */
+        #start-overlay { position: fixed; inset: 0; background: rgba(255,240,243,0.95); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .diff-btn { background: white; border: 3px solid var(--p-light); padding: 15px 30px; border-radius: 20px; margin: 5px; cursor: pointer; font-weight: 700; font-family: 'Quicksand'; transition: 0.2s; }
+        .diff-btn:hover { background: var(--p-dark); color: white; border-color: white; }
+
+        /* 4-Chart Grid (Reordered) */
         .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #111; padding: 10px; border-radius: 25px; border: 4px solid white; }
         .chart-box { text-align: center; }
-        .chart-label { color: var(--p-light); font-size: 0.6rem; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
+        .chart-label { color: var(--p-light); font-size: 0.6rem; font-weight: bold; margin-bottom: 2px; }
         canvas { width: 100%; height: 70px; background: #000; border-radius: 10px; }
 
-        /* Board */
-        .board-card { background: #111; border-radius: 25px; padding: 12px; font-family: 'Roboto Mono'; font-size: 0.7rem; color: #eee; border: 4px solid white; }
-        .mid-price-zone { background: #222; text-align: center; padding: 5px; margin: 5px 0; border-radius: 12px; border: 1px solid #444; }
+        .board-card { background: #111; border-radius: 25px; padding: 10px; font-family: 'Roboto Mono'; font-size: 0.65rem; color: #eee; border: 4px solid white; }
+        .mid-price-zone { background: #222; text-align: center; padding: 5px; margin: 4px 0; border-radius: 12px; border: 1px solid #444; }
         .mid-val { font-size: 1.1rem; font-weight: bold; color: var(--p-main); }
-        .board-row { display: flex; justify-content: space-between; padding: 1px 5px; }
+        .board-row { display: flex; justify-content: space-between; padding: 0px 5px; }
 
-        /* Battle Zone */
         .battle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .player-card { background: white; border-radius: 30px; padding: 15px; border: 3px solid var(--p-light); position: relative; text-align: center; transition: 0.3s; }
+        .player-card { background: white; border-radius: 30px; padding: 15px; border: 3px solid var(--p-light); position: relative; text-align: center; }
         .player-card.winning { border-color: var(--p-dark); box-shadow: 0 0 20px rgba(251,111,146,0.3); }
-        .p-name { font-weight: 700; font-size: 0.8rem; color: var(--p-dark); }
-        .p-asset { font-size: 1.2rem; font-weight: 700; margin: 5px 0; }
+        .p-name { font-weight: 700; font-size: 0.75rem; color: var(--p-dark); }
+        .p-asset { font-size: 1.1rem; font-weight: 700; margin: 5px 0; }
         
-        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .btn { border: none; padding: 12px; border-radius: 15px; font-weight: 700; cursor: pointer; font-family: 'Quicksand'; font-size: 0.8rem; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
-        .btn:active { transform: translateY(2px); box-shadow: none; }
+        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .btn { border: none; padding: 10px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: 'Quicksand'; font-size: 0.75rem; color: white; }
         .btn-buy { background: var(--ask); }
         .btn-sell { background: var(--bid); }
-        .btn-max { background: var(--p-light); color: var(--p-dark); grid-column: span 2; font-size: 0.7rem; padding: 6px; }
+        .btn-max { background: var(--p-light); color: var(--p-dark); grid-column: span 2; font-size: 0.7rem; padding: 5px; }
         .btn:disabled { opacity: 0.2; }
 
         .tips { font-size: 0.7rem; font-weight: 700; color: var(--p-dark); text-align: center; background: white; padding: 8px; border-radius: 15px; }
@@ -43,44 +44,48 @@
 </head>
 <body>
 
+<div id="start-overlay">
+    <span style="font-size:3rem;">🎀</span>
+    <h2 style="color:var(--p-dark);">Pinky Trade School</h2>
+    <p>Choose Rival Strength:</p>
+    <button class="diff-btn" onclick="startGame(0.05)">🐣 Weak</button>
+    <button class="diff-btn" onclick="startGame(0.15)">🐰 Normal</button>
+    <button class="diff-btn" onclick="startGame(0.30)">🦊 Strong</button>
+    <button class="diff-btn" onclick="startGame(0.50)">🐉 Ultra</button>
+</div>
+
 <div class="wrapper">
-    <div class="tips" id="market-tips">Welcome to Trading School! Buy when prices are low 🌸</div>
+    <div class="tips" id="market-tips">Watch the 5M chart for instant entries! 🌸</div>
     
     <div class="chart-grid">
-        <div class="chart-box"><div class="chart-label">Weekly (Trend)</div><canvas id="chartWeekly"></canvas></div>
-        <div class="chart-box"><div class="chart-label">Daily (Flow)</div><canvas id="chartDaily"></canvas></div>
-        <div class="chart-box"><div class="chart-label">1 Hour (Focus)</div><canvas id="chart1h"></canvas></div>
-        <div class="chart-box"><div class="chart-label">5 Min (Now)</div><canvas id="chart5m"></canvas></div>
+        <div class="chart-box"><div class="chart-label">5 MIN (ENTRY)</div><canvas id="chart5m"></canvas></div>
+        <div class="chart-box"><div class="chart-label">1 HOUR</div><canvas id="chart1h"></canvas></div>
+        <div class="chart-box"><div class="chart-label">DAILY</div><canvas id="chartDaily"></canvas></div>
+        <div class="chart-box"><div class="chart-label">WEEKLY (TREND)</div><canvas id="chartWeekly"></canvas></div>
     </div>
 
     <div class="board-card">
         <div id="ask-rows"></div>
-        <div class="mid-price-zone">
-            <span class="mid-val">¥<span id="cur-price">100</span></span>
-        </div>
+        <div class="mid-price-zone"><span class="mid-val">¥<span id="cur-price">100</span></span></div>
         <div id="bid-rows"></div>
     </div>
 
     <div class="battle-grid">
-        <div class="player-card" id="card-p1">
-            <div class="p-name">Student achan</div>
-            <div class="p-asset">¥<span id="total-p1">100,000</span></div>
+        <div class="player-card" id="card-user">
+            <div class="p-name">You (achan)</div>
+            <div class="p-asset">¥<span id="total-user">100,000</span></div>
             <div class="trade-btns">
-                <button class="btn btn-buy" onclick="trade(1,'buy',1)">Buy 1</button>
-                <button class="btn btn-sell" id="s1-p1" onclick="trade(1,'sell',1)">Sell 1</button>
-                <button class="btn btn-max" onclick="trade(1,'buy','max')">Buy MAX</button>
-                <button class="btn btn-max" id="sm-p1" onclick="trade(1,'sell','max')">Sell ALL</button>
+                <button class="btn btn-buy" onclick="tradeUser('buy', 1)">Buy 1</button>
+                <button class="btn btn-sell" id="s1-u" onclick="tradeUser('sell', 1)">Sell 1</button>
+                <button class="btn btn-max" onclick="tradeUser('buy','max')">Buy MAX</button>
+                <button class="btn btn-max" id="sm-u" onclick="tradeUser('sell','max')">Sell ALL</button>
             </div>
         </div>
-        <div class="player-card" id="card-p2">
-            <div class="p-name">Student Rival</div>
-            <div class="p-asset">¥<span id="total-p2">100,000</span></div>
-            <div class="trade-btns">
-                <button class="btn btn-buy" onclick="trade(2,'buy',1)">Buy 1</button>
-                <button class="btn btn-sell" id="s1-p2" onclick="trade(2,'sell',1)">Sell 1</button>
-                <button class="btn btn-max" onclick="trade(2,'buy','max')">Buy MAX</button>
-                <button class="btn btn-max" id="sm-p2" onclick="trade(2,'sell','max')">Sell ALL</button>
-            </div>
+        <div class="player-card" id="card-cpu">
+            <div class="p-name" id="cpu-name">Rival CPU</div>
+            <div class="p-asset">¥<span id="total-cpu">100,000</span></div>
+            <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 10px;">CPU Strategy Mode</div>
+            <div style="font-size: 0.6rem; font-weight: bold; color: var(--p-main);" id="cpu-status">WAITING</div>
         </div>
     </div>
 </div>
@@ -88,15 +93,34 @@
 <script>
     let price = 100;
     const MIN = 70, MAX = 130;
-    let p1 = { cash: 100000, hold: 0 }, p2 = { cash: 100000, hold: 0 };
+    let user = { cash: 100000, hold: 0 }, cpu = { cash: 100000, hold: 0 };
+    let cpuDifficulty = 0.15;
 
-    // Candle Data
     let data5m = [], data1h = [], dataDaily = [], dataWeekly = [];
     let currentCandle = { o: price, h: price, l: price, c: price, ticks: 0 };
 
+    function generateHistory() {
+        for(let i=0; i<60; i++) {
+            let move = (Math.random() - 0.5) * 6;
+            price = Math.max(MIN, Math.min(MAX, Math.floor(price + move)));
+            let candle = {o: price, h: price+2, l: price-2, c: price, ticks: 1};
+            data5m.push(candle);
+            if(i%3===0) data1h.push(candle);
+            if(i%9===0) dataDaily.push(candle);
+            if(i%18===0) dataWeekly.push(candle);
+        }
+    }
+
+    function startGame(diff) {
+        cpuDifficulty = diff;
+        document.getElementById('start-overlay').style.display = 'none';
+        generateHistory();
+        setInterval(updateMarket, 600);
+    }
+
     function updateMarket() {
         let move = (Math.random() - 0.5) * 8;
-        if (Math.random() > 0.9) move *= 4;
+        if (Math.random() > 0.9) move *= 3;
         price = Math.max(MIN, Math.min(MAX, Math.floor(price + move)));
 
         currentCandle.h = Math.max(currentCandle.h, price);
@@ -104,30 +128,24 @@
         currentCandle.c = price;
         currentCandle.ticks++;
 
-        // Simulation Period Logic (Speed-up for game)
-        if (currentCandle.ticks >= 3) { // 5m candle
-            data5m.push({...currentCandle});
-            if (data5m.length > 20) data5m.shift();
-            
-            if (data5m.length % 3 === 0) { // 1h candle
-                data1h.push({o:data5m.slice(-3)[0].o, h:Math.max(...data5m.slice(-3).map(x=>x.h)), l:Math.min(...data5m.slice(-3).map(x=>x.l)), c:price});
-                if (data1h.length > 20) data1h.shift();
+        if (currentCandle.ticks >= 3) {
+            data5m.push({...currentCandle}); if (data5m.length > 20) data5m.shift();
+            if (data5m.length % 3 === 0) {
+                data1h.push({...currentCandle}); if (data1h.length > 20) data1h.shift();
             }
-            if (data1h.length % 3 === 0 && data1h.length > 0) { // Daily
-                dataDaily.push({o:data1h.slice(-3)[0].o, h:Math.max(...data1h.slice(-3).map(x=>x.h)), l:Math.min(...data1h.slice(-3).map(x=>x.l)), c:price});
-                if (dataDaily.length > 20) dataDaily.shift();
+            if (data1h.length % 3 === 0) {
+                dataDaily.push({...currentCandle}); if (dataDaily.length > 20) dataDaily.shift();
             }
-            if (dataDaily.length % 3 === 0 && dataDaily.length > 0) { // Weekly
-                dataWeekly.push({o:dataDaily.slice(-3)[0].o, h:Math.max(...dataDaily.slice(-3).map(x=>x.h)), l:Math.min(...dataDaily.slice(-3).map(x=>x.l)), c:price});
-                if (dataWeekly.length > 20) dataWeekly.shift();
+            if (dataDaily.length % 3 === 0) {
+                dataWeekly.push({...currentCandle}); if (dataWeekly.length > 20) dataWeekly.shift();
             }
             currentCandle = { o: price, h: price, l: price, c: price, ticks: 0 };
         }
 
+        cpuLogic();
         drawAllCharts();
         drawBoard();
         updateUI();
-        updateTips();
     }
 
     function drawCandles(id, data) {
@@ -135,10 +153,18 @@
         const w = c.width = c.offsetWidth; const h = c.height = c.offsetHeight;
         ctx.clearRect(0,0,w,h);
         const space = w / 22;
+        const getY = (val) => h - ((val - 68) / (132 - 68)) * h;
+
+        ctx.beginPath(); ctx.strokeStyle = 'rgba(251, 111, 146, 0.4)'; ctx.lineWidth = 2;
         data.forEach((d, i) => {
             const x = i * space + space;
-            const getY = (val) => h - ((val - 68) / (132 - 68)) * h;
-            ctx.strokeStyle = '#555'; ctx.beginPath(); ctx.moveTo(x, getY(d.h)); ctx.lineTo(x, getY(d.l)); ctx.stroke();
+            if(i===0) ctx.moveTo(x, getY(d.c)); else ctx.lineTo(x, getY(d.c));
+        });
+        ctx.stroke();
+
+        data.forEach((d, i) => {
+            const x = i * space + space;
+            ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x, getY(d.h)); ctx.lineTo(x, getY(d.l)); ctx.stroke();
             ctx.fillStyle = d.c >= d.o ? '#fb6f92' : '#777';
             const rectY = getY(Math.max(d.o, d.c));
             const rectH = Math.max(2, Math.abs(getY(d.o) - getY(d.c)));
@@ -160,39 +186,41 @@
         document.getElementById('cur-price').innerText = price;
     }
 
-    function updateTips() {
-        const tips = document.getElementById('market-tips');
-        if (price >= 125) tips.innerText = "🚨 High price! Good time to sell? 💰";
-        else if (price <= 75) tips.innerText = "💎 Low price! Time to buy the dip? ✨";
-        else tips.innerText = "Keep watching the charts... 🎀";
+    function cpuLogic() {
+        const prob = Math.random();
+        const status = document.getElementById('cpu-status');
+        if (prob < cpuDifficulty) {
+            if (price <= 85 && cpu.cash >= price) { 
+                let buyQty = Math.floor((cpu.cash / price) * cpuDifficulty * 2);
+                cpu.cash -= buyQty * price; cpu.hold += buyQty;
+                status.innerText = "BUYING 🎀";
+            } else if (price >= 115 && cpu.hold > 0) {
+                cpu.cash += cpu.hold * price; cpu.hold = 0;
+                status.innerText = "SELLING 💰";
+            }
+        }
     }
 
-    function trade(pNum, type, amt) {
-        let p = (pNum === 1) ? p1 : p2;
+    function tradeUser(type, amt) {
         if (type === 'buy') {
-            let qty = (amt === 'max') ? Math.floor(p.cash / price) : amt;
-            if (p.cash >= price * qty && qty > 0) { p.cash -= price * qty; p.hold += qty; }
+            let qty = (amt === 'max') ? Math.floor(user.cash / price) : amt;
+            if (user.cash >= price * qty && qty > 0) { user.cash -= price * qty; user.hold += qty; }
         } else {
-            let qty = (amt === 'max') ? p.hold : amt;
-            if (p.hold >= qty && qty > 0) { p.cash += price * qty; p.hold -= qty; }
+            let qty = (amt === 'max') ? user.hold : amt;
+            if (user.hold >= qty && qty > 0) { user.hold -= qty; user.cash += price * qty; }
         }
         updateUI();
     }
 
     function updateUI() {
-        const t1 = p1.cash + (p1.hold * price), t2 = p2.cash + (p2.hold * price);
-        document.getElementById('total-p1').innerText = t1.toLocaleString();
-        document.getElementById('total-p2').innerText = t2.toLocaleString();
-        document.getElementById('card-p1').className = `player-card ${t1 > t2 ? 'winning' : ''}`;
-        document.getElementById('card-p2').className = `player-card ${t2 > t1 ? 'winning' : ''}`;
-        document.getElementById('s1-p1').disabled = p1.hold < 1;
-        document.getElementById('sm-p1').disabled = p1.hold < 1;
-        document.getElementById('s1-p2').disabled = p2.hold < 1;
-        document.getElementById('sm-p2').disabled = p2.hold < 1;
+        const tu = user.cash + (user.hold * price), tc = cpu.cash + (cpu.hold * price);
+        document.getElementById('total-user').innerText = tu.toLocaleString();
+        document.getElementById('total-cpu').innerText = tc.toLocaleString();
+        document.getElementById('card-user').className = `player-card ${tu > tc ? 'winning' : ''}`;
+        document.getElementById('card-cpu').className = `player-card ${tc > tu ? 'winning' : ''}`;
+        document.getElementById('s1-u').disabled = user.hold < 1;
+        document.getElementById('sm-u').disabled = user.hold < 1;
     }
-
-    setInterval(updateMarket, 600);
-    window.onload = updateMarket;
 </script>
 </body>
 </html>
