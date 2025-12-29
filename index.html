@@ -217,3 +217,33 @@
 </script>
 </body>
 </html>
+
+/* 本格的な多角形の破片 */
+.shard {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    z-index: 5000;
+    pointer-events: none;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* 菱形や三角形に */
+}
+
+/* シミュレーション脱出画面 */
+#matrix-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    color: #00ff41; /* マトリックス・グリーン */
+    font-family: 'Roboto Mono', monospace;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10% 15%;
+    z-index: 6000;
+    font-size: 1.2rem;
+    line-height: 1.8;
+}
+
+.cursor { display: inline-block; width: 10px; height: 1.2rem; background: #00ff41; animation: blink 0.8s infinite; vertical-align: middle; }
+@keyframes blink { 50% { opacity: 0; } }
