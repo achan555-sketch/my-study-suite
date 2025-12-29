@@ -3,65 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 Pinky Trade School: Focus 5M v10 🎀</title>
+    <title>🎀 Pinky Trade: World Rank v11 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500&display=swap');
-        :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; --ask: #ff4757; --bid: #2ed573; }
+        :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; --up: #ff4757; --down: #2ed573; }
         
         body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
         .wrapper { width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 10px; }
         
-        #start-overlay { position: fixed; inset: 0; background: rgba(255,240,243,0.95); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .diff-btn { background: white; border: 3px solid var(--p-light); padding: 15px 30px; border-radius: 20px; margin: 5px; cursor: pointer; font-weight: 700; font-family: 'Quicksand'; transition: 0.2s; }
-        .diff-btn:hover { background: var(--p-dark); color: white; border-color: white; }
+        /* Initial Screen */
+        #start-overlay { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .input-name { padding: 15px; border-radius: 15px; border: 3px solid var(--p-light); width: 80%; max-width: 300px; font-size: 1.2rem; text-align: center; margin-bottom: 20px; outline: none; }
+        .diff-btn { background: var(--p-light); border: none; padding: 12px 25px; border-radius: 15px; margin: 5px; cursor: pointer; font-weight: 700; font-family: 'Quicksand'; }
+        .diff-btn:hover { background: var(--p-dark); color: white; }
 
-        /* 4-Chart Grid (Reordered) */
-        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #111; padding: 10px; border-radius: 25px; border: 4px solid white; }
-        .chart-box { text-align: center; }
-        .chart-label { color: var(--p-light); font-size: 0.6rem; font-weight: bold; margin-bottom: 2px; }
-        canvas { width: 100%; height: 70px; background: #000; border-radius: 10px; }
+        /* Rank Badge */
+        .rank-badge { background: linear-gradient(135deg, #ffd700, #ff8c00); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Square Chart Grid */
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .chart-box { background: #111; border-radius: 20px; padding: 10px; border: 4px solid white; aspect-ratio: 1 / 1; display: flex; flex-direction: column; }
+        .chart-label { color: #888; font-size: 0.6rem; font-weight: bold; margin-bottom: 5px; text-align: left; }
+        canvas { width: 100%; flex-grow: 1; background: #000; border-radius: 10px; }
+
+        /* Leaderboard */
+        .leaderboard { background: white; border-radius: 25px; padding: 15px; border: 3px solid var(--p-light); font-size: 0.75rem; }
+        .leader-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid var(--p-light); }
+        .me { color: var(--p-dark); font-weight: bold; background: var(--p-light); border-radius: 5px; padding: 2px 5px; }
 
         .board-card { background: #111; border-radius: 25px; padding: 10px; font-family: 'Roboto Mono'; font-size: 0.65rem; color: #eee; border: 4px solid white; }
-        .mid-price-zone { background: #222; text-align: center; padding: 5px; margin: 4px 0; border-radius: 12px; border: 1px solid #444; }
+        .mid-price-zone { background: #222; text-align: center; padding: 5px; margin: 4px 0; border-radius: 12px; }
         .mid-val { font-size: 1.1rem; font-weight: bold; color: var(--p-main); }
-        .board-row { display: flex; justify-content: space-between; padding: 0px 5px; }
-
-        .battle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .player-card { background: white; border-radius: 30px; padding: 15px; border: 3px solid var(--p-light); position: relative; text-align: center; }
-        .player-card.winning { border-color: var(--p-dark); box-shadow: 0 0 20px rgba(251,111,146,0.3); }
-        .p-name { font-weight: 700; font-size: 0.75rem; color: var(--p-dark); }
-        .p-asset { font-size: 1.1rem; font-weight: 700; margin: 5px 0; }
         
-        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        .btn { border: none; padding: 10px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: 'Quicksand'; font-size: 0.75rem; color: white; }
-        .btn-buy { background: var(--ask); }
-        .btn-sell { background: var(--bid); }
-        .btn-max { background: var(--p-light); color: var(--p-dark); grid-column: span 2; font-size: 0.7rem; padding: 5px; }
-        .btn:disabled { opacity: 0.2; }
-
-        .tips { font-size: 0.7rem; font-weight: 700; color: var(--p-dark); text-align: center; background: white; padding: 8px; border-radius: 15px; }
+        .player-card { background: white; border-radius: 30px; padding: 15px; border: 3px solid var(--p-light); text-align: center; }
+        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
+        .btn { border: none; padding: 10px; border-radius: 12px; font-weight: 700; cursor: pointer; color: white; font-size: 0.8rem; }
+        .btn-buy { background: var(--up); }
+        .btn-sell { background: var(--down); }
     </style>
 </head>
 <body>
 
 <div id="start-overlay">
-    <span style="font-size:3rem;">🎀</span>
-    <h2 style="color:var(--p-dark);">Pinky Trade School</h2>
-    <p>Choose Rival Strength:</p>
-    <button class="diff-btn" onclick="startGame(0.05)">🐣 Weak</button>
-    <button class="diff-btn" onclick="startGame(0.15)">🐰 Normal</button>
-    <button class="diff-btn" onclick="startGame(0.30)">🦊 Strong</button>
-    <button class="diff-btn" onclick="startGame(0.50)">🐉 Ultra</button>
+    <span style="font-size:3rem;">👑</span>
+    <h2 style="color:var(--p-dark);">World Trading Championship</h2>
+    <input type="text" id="user-name-input" class="input-name" placeholder="Your Name" maxlength="10">
+    <p>Select Difficulty:</p>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center;">
+        <button class="diff-btn" onclick="startGame(0.05)">🐣 Chick</button>
+        <button class="diff-btn" onclick="startGame(0.15)">🐰 Rabbit</button>
+        <button class="diff-btn" onclick="startGame(0.35)">🦊 Fox</button>
+        <button class="diff-btn" onclick="startGame(0.55)">🐉 Dragon</button>
+    </div>
 </div>
 
 <div class="wrapper">
-    <div class="tips" id="market-tips">Watch the 5M chart for instant entries! 🌸</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:0 10px;">
+        <span id="player-name-display" style="font-weight:700;">Trader: achan</span>
+        <span id="rank-display" class="rank-badge">BRONZE</span>
+    </div>
     
     <div class="chart-grid">
-        <div class="chart-box"><div class="chart-label">5 MIN (ENTRY)</div><canvas id="chart5m"></canvas></div>
-        <div class="chart-box"><div class="chart-label">1 HOUR</div><canvas id="chart1h"></canvas></div>
-        <div class="chart-box"><div class="chart-label">DAILY</div><canvas id="chartDaily"></canvas></div>
-        <div class="chart-box"><div class="chart-label">WEEKLY (TREND)</div><canvas id="chartWeekly"></canvas></div>
+        <div class="chart-box"><div class="chart-label">5M (ENTRY)</div><canvas id="chart5m"></canvas></div>
+        <div class="chart-box"><div class="chart-label">1H (SHORT)</div><canvas id="chart1h"></canvas></div>
+        <div class="chart-box"><div class="chart-label">DAILY (MID)</div><canvas id="chartDaily"></canvas></div>
+        <div class="chart-box"><div class="chart-label">WEEKLY (LONG)</div><canvas id="chartWeekly"></canvas></div>
     </div>
 
     <div class="board-card">
@@ -70,82 +76,69 @@
         <div id="bid-rows"></div>
     </div>
 
-    <div class="battle-grid">
-        <div class="player-card" id="card-user">
-            <div class="p-name">You (achan)</div>
-            <div class="p-asset">¥<span id="total-user">100,000</span></div>
-            <div class="trade-btns">
-                <button class="btn btn-buy" onclick="tradeUser('buy', 1)">Buy 1</button>
-                <button class="btn btn-sell" id="s1-u" onclick="tradeUser('sell', 1)">Sell 1</button>
-                <button class="btn btn-max" onclick="tradeUser('buy','max')">Buy MAX</button>
-                <button class="btn btn-max" id="sm-u" onclick="tradeUser('sell','max')">Sell ALL</button>
-            </div>
+    <div class="player-card">
+        <div style="font-size: 0.7rem; opacity: 0.5;">YOUR TOTAL ASSET</div>
+        <div style="font-size: 1.5rem; font-weight: 700; color: var(--p-dark);">¥<span id="total-val">100,000</span></div>
+        <div class="trade-btns">
+            <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1</button>
+            <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1</button>
+            <button class="btn btn-buy" style="opacity:0.8" onclick="trade('buy','max')">BUY MAX</button>
+            <button class="btn btn-sell" style="opacity:0.8" id="smax" onclick="trade('sell','max')">SELL ALL</button>
         </div>
-        <div class="player-card" id="card-cpu">
-            <div class="p-name" id="cpu-name">Rival CPU</div>
-            <div class="p-asset">¥<span id="total-cpu">100,000</span></div>
-            <div style="font-size: 0.6rem; opacity: 0.5; margin-top: 10px;">CPU Strategy Mode</div>
-            <div style="font-size: 0.6rem; font-weight: bold; color: var(--p-main);" id="cpu-status">WAITING</div>
+        <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:0.75rem; font-weight:700; opacity:0.7;">
+            <span>Cash: ¥<span id="cash-val">100,000</span></span>
+            <span>Hold: <span id="hold-val">0</span> 🎀</span>
         </div>
+    </div>
+
+    <div class="leaderboard">
+        <h3 style="margin:0 0 10px 0; color:var(--p-dark); font-size:0.9rem;">🌍 World Ranking (Simulated)</h3>
+        <div id="ranking-list"></div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
+    let userName = "achan";
     let price = 100;
     const MIN = 70, MAX = 130;
-    let user = { cash: 100000, hold: 0 }, cpu = { cash: 100000, hold: 0 };
+    let user = { cash: 100000, hold: 0 };
     let cpuDifficulty = 0.15;
 
     let data5m = [], data1h = [], dataDaily = [], dataWeekly = [];
     let currentCandle = { o: price, h: price, l: price, c: price, ticks: 0 };
 
-    function generateHistory() {
-        for(let i=0; i<60; i++) {
-            let move = (Math.random() - 0.5) * 6;
-            price = Math.max(MIN, Math.min(MAX, Math.floor(price + move)));
-            let candle = {o: price, h: price+2, l: price-2, c: price, ticks: 1};
-            data5m.push(candle);
-            if(i%3===0) data1h.push(candle);
-            if(i%9===0) dataDaily.push(candle);
-            if(i%18===0) dataWeekly.push(candle);
-        }
-    }
-
     function startGame(diff) {
+        userName = document.getElementById('user-name-input').value || "Trader";
         cpuDifficulty = diff;
+        document.getElementById('player-name-display').innerText = `Trader: ${userName}`;
         document.getElementById('start-overlay').style.display = 'none';
-        generateHistory();
+        
+        // Initial History
+        for(let i=0; i<60; i++) {
+            price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*5));
+            let c = {o:price, h:price+2, l:price-2, c:price};
+            data5m.push(c); if(i%3===0) data1h.push(c); if(i%9===0) dataDaily.push(c); if(i%18===0) dataWeekly.push(c);
+        }
         setInterval(updateMarket, 600);
     }
 
     function updateMarket() {
         let move = (Math.random() - 0.5) * 8;
-        if (Math.random() > 0.9) move *= 3;
         price = Math.max(MIN, Math.min(MAX, Math.floor(price + move)));
-
         currentCandle.h = Math.max(currentCandle.h, price);
         currentCandle.l = Math.min(currentCandle.l, price);
         currentCandle.c = price;
         currentCandle.ticks++;
 
         if (currentCandle.ticks >= 3) {
-            data5m.push({...currentCandle}); if (data5m.length > 20) data5m.shift();
-            if (data5m.length % 3 === 0) {
-                data1h.push({...currentCandle}); if (data1h.length > 20) data1h.shift();
-            }
-            if (data1h.length % 3 === 0) {
-                dataDaily.push({...currentCandle}); if (dataDaily.length > 20) dataDaily.shift();
-            }
-            if (dataDaily.length % 3 === 0) {
-                dataWeekly.push({...currentCandle}); if (dataWeekly.length > 20) dataWeekly.shift();
-            }
+            data5m.push({...currentCandle}); if(data5m.length>20) data5m.shift();
+            if(data5m.length%3===0) { data1h.push({...currentCandle}); if(data1h.length>20) data1h.shift(); }
+            if(data1h.length%3===0) { dataDaily.push({...currentCandle}); if(dataDaily.length>20) dataDaily.shift(); }
+            if(dataDaily.length%3===0) { dataWeekly.push({...currentCandle}); if(dataWeekly.length>20) dataWeekly.shift(); }
             currentCandle = { o: price, h: price, l: price, c: price, ticks: 0 };
         }
-
-        cpuLogic();
-        drawAllCharts();
-        drawBoard();
-        updateUI();
+        drawAllCharts(); drawBoard(); updateUI();
     }
 
     function drawCandles(id, data) {
@@ -155,17 +148,20 @@
         const space = w / 22;
         const getY = (val) => h - ((val - 68) / (132 - 68)) * h;
 
-        ctx.beginPath(); ctx.strokeStyle = 'rgba(251, 111, 146, 0.4)'; ctx.lineWidth = 2;
+        // Line Chart (Red/Green Hybrid)
+        ctx.beginPath(); ctx.lineWidth = 2;
         data.forEach((d, i) => {
             const x = i * space + space;
+            ctx.strokeStyle = d.c >= d.o ? 'var(--up)' : 'var(--down)';
             if(i===0) ctx.moveTo(x, getY(d.c)); else ctx.lineTo(x, getY(d.c));
         });
         ctx.stroke();
 
+        // Candlesticks
         data.forEach((d, i) => {
             const x = i * space + space;
             ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x, getY(d.h)); ctx.lineTo(x, getY(d.l)); ctx.stroke();
-            ctx.fillStyle = d.c >= d.o ? '#fb6f92' : '#777';
+            ctx.fillStyle = d.c >= d.o ? 'var(--up)' : 'var(--down)';
             const rectY = getY(Math.max(d.o, d.c));
             const rectH = Math.max(2, Math.abs(getY(d.o) - getY(d.c)));
             ctx.fillRect(x - 3, rectY, 6, rectH);
@@ -179,29 +175,14 @@
 
     function drawBoard() {
         let askH = '', bidH = '';
-        for(let i=10; i>=1; i--) askH += `<div class="board-row" style="color:var(--ask)"><span>¥${Math.min(MAX, price+i)}</span><span>${Math.floor(Math.random()*150)}</span></div>`;
-        for(let i=1; i<=10; i++) bidH += `<div class="board-row" style="color:var(--bid)"><span>¥${Math.max(MIN, price-i)}</span><span>${Math.floor(Math.random()*150)}</span></div>`;
+        for(let i=10; i>=1; i--) askH += `<div class="board-row" style="color:var(--up)"><span>¥${Math.min(MAX, price+i)}</span><span>${Math.floor(Math.random()*150)}</span></div>`;
+        for(let i=1; i<=10; i++) bidH += `<div class="board-row" style="color:var(--down)"><span>¥${Math.max(MIN, price-i)}</span><span>${Math.floor(Math.random()*150)}</span></div>`;
         document.getElementById('ask-rows').innerHTML = askH;
         document.getElementById('bid-rows').innerHTML = bidH;
         document.getElementById('cur-price').innerText = price;
     }
 
-    function cpuLogic() {
-        const prob = Math.random();
-        const status = document.getElementById('cpu-status');
-        if (prob < cpuDifficulty) {
-            if (price <= 85 && cpu.cash >= price) { 
-                let buyQty = Math.floor((cpu.cash / price) * cpuDifficulty * 2);
-                cpu.cash -= buyQty * price; cpu.hold += buyQty;
-                status.innerText = "BUYING 🎀";
-            } else if (price >= 115 && cpu.hold > 0) {
-                cpu.cash += cpu.hold * price; cpu.hold = 0;
-                status.innerText = "SELLING 💰";
-            }
-        }
-    }
-
-    function tradeUser(type, amt) {
+    function trade(type, amt) {
         if (type === 'buy') {
             let qty = (amt === 'max') ? Math.floor(user.cash / price) : amt;
             if (user.cash >= price * qty && qty > 0) { user.cash -= price * qty; user.hold += qty; }
@@ -213,13 +194,39 @@
     }
 
     function updateUI() {
-        const tu = user.cash + (user.hold * price), tc = cpu.cash + (cpu.hold * price);
-        document.getElementById('total-user').innerText = tu.toLocaleString();
-        document.getElementById('total-cpu').innerText = tc.toLocaleString();
-        document.getElementById('card-user').className = `player-card ${tu > tc ? 'winning' : ''}`;
-        document.getElementById('card-cpu').className = `player-card ${tc > tu ? 'winning' : ''}`;
-        document.getElementById('s1-u').disabled = user.hold < 1;
-        document.getElementById('sm-u').disabled = user.hold < 1;
+        const total = user.cash + (user.hold * price);
+        document.getElementById('total-val').innerText = total.toLocaleString();
+        document.getElementById('cash-val').innerText = Math.floor(user.cash).toLocaleString();
+        document.getElementById('hold-val').innerText = user.hold;
+
+        // Rank Check
+        let rank = "BRONZE", color = "#cd7f32";
+        if (total >= 3000000) { rank = "DIAMOND"; color = "#b9f2ff"; }
+        else if (total >= 1000000) { rank = "PLATINUM"; color = "#e5e4e2"; }
+        else if (total >= 500000) { rank = "GOLD"; color = "#ffd700"; }
+        else if (total >= 200000) { rank = "SILVER"; color = "#c0c0c0"; }
+        
+        const rEl = document.getElementById('rank-display');
+        rEl.innerText = rank;
+        rEl.style.background = color;
+
+        // Leaderboard Update
+        const leaders = [
+            {n: "Warren B.", a: 5000000},
+            {n: "Elon M.", a: 2500000},
+            {n: userName, a: total, me: true},
+            {n: "Crypto Whale", a: 450000},
+            {n: "Finance Cat", a: 150000}
+        ].sort((a,b) => b.a - a.a);
+
+        let listH = '';
+        leaders.forEach((l, i) => {
+            listH += `<div class="leader-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>¥${l.a.toLocaleString()}</span></div>`;
+        });
+        document.getElementById('ranking-list').innerHTML = listH;
+
+        document.getElementById('s1').disabled = user.hold < 1;
+        document.getElementById('smax').disabled = user.hold < 1;
     }
 </script>
 </body>
