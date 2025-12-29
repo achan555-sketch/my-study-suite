@@ -3,41 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 achan's Pink Trade 🎀</title>
+    <title>🎀 Pink Trade Pro v2 🎀</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
-        :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500&display=swap');
+        :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; --ask: #e84393; --bid: #00b894; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         
-        /* Dashboard */
-        .dashboard { background: white; width: 90%; max-width: 450px; border-radius: 40px; padding: 30px; box-shadow: 0 20px 40px rgba(251, 111, 146, 0.15); border: 4px solid white; text-align: center; }
-        .balance-label { font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; }
-        .balance-val { font-size: 2.2rem; font-weight: 700; color: var(--p-dark); margin-bottom: 20px; }
+        .dashboard { background: white; width: 100%; max-width: 450px; border-radius: 40px; padding: 25px; box-shadow: 0 20px 40px rgba(251, 111, 146, 0.15); border: 4px solid white; text-align: center; }
+        .balance-val { font-size: 2rem; font-weight: 700; color: var(--p-dark); margin-bottom: 15px; }
 
-        /* Chart Area */
-        .chart-container { background: #fff9fa; border-radius: 20px; height: 150px; margin-bottom: 20px; position: relative; overflow: hidden; border: 1px solid var(--p-light); }
+        /* Chart */
+        .chart-container { background: #fff9fa; border-radius: 20px; height: 120px; margin-bottom: 15px; position: relative; overflow: hidden; border: 1px solid var(--p-light); }
         canvas { width: 100%; height: 100%; }
-        .price-tag { position: absolute; top: 10px; right: 15px; background: var(--p-dark); color: white; padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; }
+        .price-tag { position: absolute; top: 10px; left: 15px; background: var(--p-dark); color: white; padding: 4px 12px; border-radius: 15px; font-size: 1rem; font-weight: bold; box-shadow: 0 4px 10px rgba(251, 111, 146, 0.3); }
 
-        /* Trade Controls */
+        /* 板（Order Book） */
+        .board-container { background: #fff0f5; border-radius: 15px; padding: 10px; margin-bottom: 20px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; border: 2px solid var(--p-light); }
+        .board-row { display: flex; justify-content: space-between; padding: 2px 5px; }
+        .ask-row { color: var(--ask); }
+        .bid-row { color: var(--bid); }
+        .current-row { background: var(--p-light); font-weight: bold; color: var(--text); padding: 5px; border-radius: 8px; margin: 5px 0; }
+        .qty { opacity: 0.7; }
+
+        /* Controls */
         .trade-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .btn { border: none; padding: 18px; border-radius: 20px; font-weight: 700; font-family: 'Quicksand'; font-size: 1.1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .btn:active { transform: scale(0.95); }
         .btn-buy { background: var(--p-dark); color: white; }
-        .btn-sell { background: var(--p-light); color: var(--p-dark); }
+        .btn-sell { background: #eee; color: #666; }
+        .btn-sell.active { background: var(--bid); color: white; }
         .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* Portfolio */
-        .portfolio-info { margin-top: 20px; font-size: 0.8rem; display: flex; justify-content: space-between; padding: 10px; background: var(--bg); border-radius: 15px; }
-        
-        .history { font-size: 0.7rem; margin-top: 15px; opacity: 0.5; height: 40px; overflow: hidden; }
+        .portfolio-info { margin-top: 20px; font-size: 0.8rem; display: flex; justify-content: space-between; padding: 12px; background: var(--bg); border-radius: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="dashboard">
-        <div class="balance-label">Total Capital</div>
+        <div style="font-size:0.8rem; opacity:0.6;">TOTAL ASSETS</div>
         <div class="balance-val">¥<span id="total-val">100,000</span></div>
 
         <div class="chart-container">
@@ -45,82 +49,109 @@
             <div class="price-tag">¥<span id="current-price">100</span></div>
         </div>
 
+        <div class="board-container" id="board-area">
+            </div>
+
         <div class="trade-zone">
-            <button class="btn btn-buy" id="buy-btn" onclick="buyAll()">BUY ALL 🎀</button>
-            <button class="btn btn-sell" id="sell-btn" onclick="sellAll()" disabled>SELL ALL ✨</button>
+            <button class="btn btn-buy" id="buy-btn" onclick="buyAll()">BUY MAX 🎀</button>
+            <button class="btn btn-sell" id="sell-btn" onclick="sellAll()" disabled>SELL ALL 💰</button>
         </div>
 
         <div class="portfolio-info">
             <span>Cash: ¥<span id="cash">100,000</span></span>
-            <span>Ribbons: <span id="holding">0</span></span>
+            <span>Ribbons: <span id="holding">0</span>🎀</span>
         </div>
-
-        <div class="history" id="history-log">Welcome to Pink Market! Buy low, Sell high!</div>
     </div>
 
 <script>
     let cash = 100000;
     let holding = 0;
     let price = 100;
-    let priceHistory = Array(50).fill(100);
+    let priceHistory = Array(40).fill(100);
     
     const canvas = document.getElementById('priceChart');
     const ctx = canvas.getContext('2d');
     
-    // 株価の動きをシミュレート
+    // 価格更新（心臓部）
     function updatePrice() {
-        const volatility = 0.05; // 変動率
-        const change = price * volatility * (Math.random() - 0.48); // 若干上がりやすく
+        const volatility = (Math.random() > 0.9) ? 0.15 : 0.04; // たまに大きく動く
+        const change = price * volatility * (Math.random() - 0.48); 
         price = Math.max(10, Math.floor(price + change));
         
         priceHistory.push(price);
-        if (priceHistory.length > 50) priceHistory.shift();
+        if (priceHistory.length > 40) priceHistory.shift();
         
         drawChart();
+        drawBoard(); // 板も更新
         updateUI();
     }
 
+    // チャート描画（リッチ版）
     function drawChart() {
         const w = canvas.width = canvas.offsetWidth;
         const h = canvas.height = canvas.offsetHeight;
         ctx.clearRect(0, 0, w, h);
         
+        // グラデーション作成
+        let gradient = ctx.createLinearGradient(0, 0, 0, h);
+        gradient.addColorStop(0, 'rgba(251, 111, 146, 0.6)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
         ctx.beginPath();
-        ctx.strokeStyle = '#fb6f92';
-        ctx.lineWidth = 4;
-        ctx.lineJoin = 'round';
+        const min = Math.min(...priceHistory) * 0.95;
+        const max = Math.max(...priceHistory) * 1.05;
         
-        const min = Math.min(...priceHistory) * 0.9;
-        const max = Math.max(...priceHistory) * 1.1;
-        
+        // 線を描く
         priceHistory.forEach((p, i) => {
             const x = (i / (priceHistory.length - 1)) * w;
             const y = h - ((p - min) / (max - min)) * h;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
-        ctx.stroke();
+
+        // 下を塗りつぶす
+        ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+        ctx.fillStyle = gradient; ctx.fill();
+        
+        // 上の線を濃く描く
+        ctx.beginPath();
+        priceHistory.forEach((p, i) => {
+            const x = (i / (priceHistory.length - 1)) * w;
+            const y = h - ((p - min) / (max - min)) * h;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = '#fb6f92'; ctx.lineWidth = 3; ctx.stroke();
+    }
+
+    // 板（気配値）描画（適当シミュレーション）
+    function drawBoard() {
+        const board = document.getElementById('board-area');
+        let html = '';
+        // 売り気配 (Ask)
+        for(let i=3; i>=1; i--) {
+            html += `<div class="board-row ask-row"><span>¥${price + i*2 + Math.floor(Math.random()*3)}</span><span class="qty">${Math.floor(Math.random()*800+100)}</span></div>`;
+        }
+        // 現在値
+        html += `<div class="board-row current-row"><span>Current Price</span><span>¥${price}</span></div>`;
+        // 買い気配 (Bid)
+        for(let i=1; i<=3; i--) {
+            html += `<div class="board-row bid-row"><span>¥${Math.max(1, price - i*2 - Math.floor(Math.random()*3))}</span><span class="qty">${Math.floor(Math.random()*800+100)}</span></div>`;
+        }
+        board.innerHTML = html;
     }
 
     function buyAll() {
         if (cash < price) return;
-        holding = Math.floor(cash / price);
-        cash = cash % price;
-        log(`Bought ${holding} ribbons at ¥${price}`);
+        const canBuy = Math.floor(cash / price);
+        holding += canBuy;
+        cash -= canBuy * price;
         updateUI();
     }
 
     function sellAll() {
         if (holding === 0) return;
-        const gain = holding * price;
-        cash += gain;
-        log(`Sold everything for ¥${gain.toLocaleString()}!`);
+        cash += holding * price;
         holding = 0;
         updateUI();
-    }
-
-    function log(msg) {
-        document.getElementById('history-log').innerText = msg;
     }
 
     function updateUI() {
@@ -131,19 +162,17 @@
         document.getElementById('current-price').innerText = price;
         
         document.getElementById('buy-btn').disabled = cash < price;
-        document.getElementById('sell-btn').disabled = holding === 0;
+        const sellBtn = document.getElementById('sell-btn');
+        sellBtn.disabled = holding === 0;
+        if (holding > 0) sellBtn.classList.add('active'); else sellBtn.classList.remove('active');
 
-        // 全財産の増減で色を変える
+        // 資産の増減で色を変える
         const valEl = document.getElementById('total-val');
-        if (total > 100000) valEl.style.color = '#fb6f92';
-        else if (total < 100000) valEl.style.color = '#5c4d50';
+        valEl.style.color = total >= 100000 ? '#fb6f92' : '#5c4d50';
     }
 
-    setInterval(updatePrice, 800); // 0.8秒ごとに価格更新
-    window.onload = () => {
-        drawChart();
-        updateUI();
-    };
+    setInterval(updatePrice, 700); // 更新スピードを少し早く
+    window.onload = () => { updatePrice(); };
 </script>
 </body>
 </html>
