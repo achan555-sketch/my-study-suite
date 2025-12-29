@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 GRX Pro: Real-Timeframe v20 🎀</title>
+    <title>🎀 GRX Pro: Real-Timeframe v21 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { 
@@ -129,14 +129,37 @@
     ];
 
     function preGenerateData() {
+        // 1M & 5M data
         let p = price;
         for(let i=0; i<40; i++) {
             p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*3));
             let c = {o:p, h:p+0.5, l:p-0.5, c:p};
-            // Fill all initially to look populated
-            data1m.push(c); if(i%5===0) data5m.push(c); if(i%20===0) dataDaily.push(c); if(i%40===0) dataWeekly.push(c);
+            data1m.push(c); if(i%5===0) data5m.push(c);
         }
-        price = p;
+        
+        // DAILY data (more history, larger moves)
+        p = price;
+        for(let i=0; i<30; i++) {
+            let open = p + (Math.random()-0.5)*5;
+            let close = open + (Math.random()-0.5)*10;
+            let high = Math.max(open, close) + Math.random()*5;
+            let low = Math.min(open, close) - Math.random()*5;
+            dataDaily.push({o:open, h:high, l:low, c:close});
+            p = close;
+        }
+
+        // WEEKLY data (even more history, even larger moves)
+        p = price;
+        for(let i=0; i<30; i++) {
+            let open = p + (Math.random()-0.5)*10;
+            let close = open + (Math.random()-0.5)*20;
+            let high = Math.max(open, close) + Math.random()*10;
+            let low = Math.min(open, close) - Math.random()*10;
+            dataWeekly.push({o:open, h:high, l:low, c:close});
+            p = close;
+        }
+
+        price = data1m[data1m.length-1].c; // Set current price to end of 1M history
         candle1m = { o:price, h:price, l:price, c:price };
         candle5m = { o:price, h:price, l:price, c:price };
     }
@@ -181,9 +204,18 @@
         const c = document.getElementById(id); const ctx = c.getContext('2d');
         const w = c.width = c.offsetWidth * 2; const h = c.height = c.offsetHeight * 2;
         ctx.scale(2,2); const cw = w/2, ch = h/2; ctx.clearRect(0,0,cw,ch);
-        const drawData = [...data]; if(formingCandle) drawData.push(formingCandle); // Add forming candle temporarily
         
-        const space = cw / 32, getY = (val) => ch - ((val - 68) / (132 - 68)) * ch;
+        const drawData = [...data]; if(formingCandle) drawData.push(formingCandle);
+        if(drawData.length === 0) return;
+
+        // Calculate scale based on data range
+        let minVal = drawData[0].l, maxVal = drawData[0].h;
+        drawData.forEach(d => { minVal = Math.min(minVal, d.l); maxVal = Math.max(maxVal, d.h); });
+        const range = maxVal - minVal || 1;
+        const padding = range * 0.1; // Add padding
+        const getY = (val) => ch - ((val - (minVal - padding)) / (range + 2*padding)) * ch;
+
+        const space = cw / 32;
         drawData.forEach((d, i) => {
             const x = i * space + space, up = d.c >= d.o, color = up ? '#ff3131' : '#00e676';
             ctx.strokeStyle = color; ctx.lineWidth = 1.2;
@@ -195,10 +227,8 @@
     }
 
     function drawAllCharts() {
-        // Pass forming candles to 1M and 5M charts
         drawCandles('chart1m', data1m, candle1m);
         drawCandles('chart5m', data5m, candle5m);
-        // Daily/Weekly only draw historical data
         drawCandles('chartDaily', dataDaily);
         drawCandles('chartWeekly', dataWeekly);
     }
