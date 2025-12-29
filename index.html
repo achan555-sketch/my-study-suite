@@ -3,178 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 Pink Trade v4: Hyper Liquid 🎀</title>
+    <title>🎀 Pink Trade: VS Battle v6 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500&display=swap');
         :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; --ask: #ff4757; --bid: #2ed573; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 10px; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; box-sizing: border-box; }
+        .wrapper { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
         
-        .dashboard { background: white; width: 100%; max-width: 400px; border-radius: 40px; padding: 25px; box-shadow: 0 20px 50px rgba(251, 111, 146, 0.3); border: 4px solid white; position: relative; }
-        .balance-val { font-size: 2rem; font-weight: 700; color: var(--p-dark); text-align: center; margin-bottom: 5px; }
+        /* Dashboard & Chart */
+        .header-card { background: white; border-radius: 30px; padding: 15px; text-align: center; box-shadow: 0 10px 30px rgba(251,111,146,0.1); border: 3px solid white; }
+        .chart-container { background: #111; border-radius: 20px; height: 100px; margin-top: 10px; position: relative; overflow: hidden; }
+        canvas { width: 100%; height: 100%; }
+        .price-tag { position: absolute; top: 10px; left: 10px; background: var(--p-dark); color: white; padding: 4px 10px; border-radius: 10px; font-weight: bold; }
 
-        /* Chart */
-        .chart-container { background: #1e1e1e; border-radius: 20px; height: 120px; margin-bottom: 15px; position: relative; overflow: hidden; }
-        canvas { width: 100%; height: 100%; opacity: 0.8; }
-        .price-tag { position: absolute; top: 10px; left: 10px; background: var(--p-dark); color: white; padding: 5px 12px; border-radius: 12px; font-size: 1rem; font-weight: bold; animation: pulse 0.3s infinite alternate; }
-        @keyframes pulse { from { opacity: 1; } to { opacity: 0.8; } }
+        /* Board */
+        .board { background: #111; border-radius: 15px; padding: 10px; font-family: 'Roboto Mono'; font-size: 0.75rem; color: #eee; }
+        .board-row { display: flex; justify-content: space-between; }
+        .mid-price { background: #222; text-align: center; padding: 4px; margin: 4px 0; border-radius: 5px; font-weight: bold; }
 
-        /* 超高速・板情報 */
-        .board-container { background: #111; border-radius: 15px; padding: 15px; margin-bottom: 20px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; color: #eee; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-        .board-header { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 5px; font-size: 0.65rem; color: #666; }
-        .board-row { display: flex; justify-content: space-between; padding: 3px 0; transition: 0.1s; }
-        .ask-row { color: var(--ask); text-shadow: 0 0 5px rgba(255,71,87,0.3); }
-        .bid-row { color: var(--bid); text-shadow: 0 0 5px rgba(46,213,115,0.3); }
-        .mid-row { background: #222; color: #fff; padding: 6px; border-radius: 10px; text-align: center; font-weight: bold; margin: 5px 0; border: 1px solid #444; }
+        /* Battle Zone */
+        .battle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .player-card { background: white; border-radius: 25px; padding: 15px; border: 3px solid var(--p-light); position: relative; }
+        .player-card.winning { border-color: var(--p-dark); box-shadow: 0 0 15px rgba(251,111,146,0.4); }
+        .winner-crown { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; display: none; }
+        .player-card.winning .winner-crown { display: block; }
 
-        /* 1株単位コントロール */
-        .trade-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .trade-col { display: flex; flex-direction: column; gap: 10px; }
-        .btn { border: none; padding: 15px; border-radius: 18px; font-weight: 700; font-family: 'Quicksand'; cursor: pointer; transition: 0.1s; font-size: 1rem; color: white; }
+        .p-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; color: var(--p-dark); }
+        .p-asset { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+        
+        .trade-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .btn { border: none; padding: 10px; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: 'Quicksand'; font-size: 0.8rem; color: white; transition: 0.1s; }
         .btn:active { transform: scale(0.92); }
-        .btn-buy { background: var(--ask); box-shadow: 0 4px 0 #c0392b; }
-        .btn-sell { background: var(--bid); box-shadow: 0 4px 0 #27ae60; }
-        .btn-max { background: var(--p-light); color: var(--p-dark); font-size: 0.75rem; padding: 8px; box-shadow: 0 3px 0 #ffc1d1; }
-        .btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-buy { background: var(--ask); }
+        .btn-sell { background: var(--bid); }
+        .btn-max { background: #eee; color: #888; grid-column: span 2; padding: 5px; font-size: 0.7rem; }
+        .btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .portfolio-info { margin-top: 20px; font-size: 0.85rem; display: flex; justify-content: space-between; padding: 15px; background: var(--bg); border-radius: 20px; font-weight: 700; }
-        .news { font-size: 0.7rem; color: var(--p-dark); font-weight: bold; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .p-info { font-size: 0.7rem; margin-top: 10px; opacity: 0.7; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
-        <div class="news" id="status">🎀 SYSTEM ONLINE - HIGH VOLATILITY</div>
-        <div class="balance-val">¥<span id="total-val">100,000</span></div>
-
+<div class="wrapper">
+    <div class="header-card">
+        <div style="font-size: 0.7rem; font-weight: 700; opacity: 0.5;">🎀 PINK MARKET VS 🎀</div>
         <div class="chart-container">
             <canvas id="priceChart"></canvas>
-            <div class="price-tag">¥<span id="current-price">100</span></div>
+            <div class="price-tag">¥<span id="cur-price">100</span></div>
         </div>
-
-        <div class="board-container">
-            <div class="board-header"><span>PRICE</span><span>ORDER QTY</span></div>
+        <div class="board">
             <div id="ask-area"></div>
-            <div class="mid-row">🎀 MARKET: ¥<span id="mid-price">100</span></div>
+            <div class="mid-price">¥<span id="mid-price">100</span></div>
             <div id="bid-area"></div>
-        </div>
-
-        <div class="trade-zone">
-            <div class="trade-col">
-                <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1</button>
-                <button class="btn btn-buy" onclick="trade('buy', 10)">BUY 10</button>
-                <button class="btn btn-max" onclick="trade('buy', 'max')">BUY ALL</button>
-            </div>
-            <div class="trade-col">
-                <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1</button>
-                <button class="btn btn-sell" id="s10" onclick="trade('sell', 10)">SELL 10</button>
-                <button class="btn btn-max" id="smax" onclick="trade('sell', 'max')">SELL ALL</button>
-            </div>
-        </div>
-
-        <div class="portfolio-info">
-            <span>Cash: ¥<span id="cash">100,000</span></span>
-            <span>Asset: <span id="holding">0</span> 🎀</span>
         </div>
     </div>
 
+    <div class="battle-grid">
+        <div class="player-card" id="card-p1">
+            <div class="winner-crown">👑</div>
+            <div class="p-name">Player achan</div>
+            <div class="p-asset">¥<span id="total-p1">100,000</span></div>
+            <div class="trade-btns">
+                <button class="btn btn-buy" onclick="trade(1, 'buy', 1)">Buy 1</button>
+                <button class="btn btn-sell" id="s1-p1" onclick="trade(1, 'sell', 1)">Sell 1</button>
+                <button class="btn btn-max" onclick="trade(1, 'buy', 'max')">Buy MAX</button>
+                <button class="btn btn-max" id="sm-p1" onclick="trade(1, 'sell', 'max')">Sell ALL</button>
+            </div>
+            <div class="p-info">Cash: ¥<span id="cash-p1">100k</span> / 🎀 <span id="hold-p1">0</span></div>
+        </div>
+
+        <div class="player-card" id="card-p2">
+            <div class="winner-crown">👑</div>
+            <div class="p-name">Player Rival</div>
+            <div class="p-asset">¥<span id="total-p2">100,000</span></div>
+            <div class="trade-btns">
+                <button class="btn btn-buy" onclick="trade(2, 'buy', 1)">Buy 1</button>
+                <button class="btn btn-sell" id="s1-p2" onclick="trade(2, 'sell', 1)">Sell 1</button>
+                <button class="btn btn-max" onclick="trade(2, 'buy', 'max')">Buy MAX</button>
+                <button class="btn btn-max" id="sm-p2" onclick="trade(2, 'sell', 'max')">Sell ALL</button>
+            </div>
+            <div class="p-info">Cash: ¥<span id="cash-p2">100k</span> / 🎀 <span id="hold-p2">0</span></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    let cash = 100000;
-    let holding = 0;
     let price = 100;
-    let history = Array(50).fill(100);
-    
+    let history = Array(40).fill(100);
+    const MIN = 70, MAX = 130;
+
+    let p1 = { cash: 100000, hold: 0 };
+    let p2 = { cash: 100000, hold: 0 };
+
     const canvas = document.getElementById('priceChart');
     const ctx = canvas.getContext('2d');
-    
-    function updatePrice() {
-        // かなりランダムな値動き (100から70など急激な変化に対応)
-        let move = (Math.random() - 0.5) * 12; // 通常時
-        if (Math.random() > 0.92) move = (Math.random() - 0.5) * 40; // 激動時
 
-        price = Math.max(5, Math.floor(price + move));
+    function updatePrice() {
+        let move = (Math.random() - 0.5) * 14;
+        if (Math.random() > 0.9) move *= 3;
+        price = Math.max(MIN, Math.min(MAX, Math.floor(price + move)));
+        
         history.push(price);
-        if (history.length > 50) history.shift();
+        if (history.length > 40) history.shift();
         
         drawChart();
         drawBoard();
         updateUI();
-
-        // ステータス更新
-        if (move > 10) document.getElementById('status').innerText = "🚀 MOONING!";
-        else if (move < -10) document.getElementById('status').innerText = "💀 CRASHING!";
-        else document.getElementById('status').innerText = "🎀 HIGH LIQUIDITY MODE";
     }
 
     function drawChart() {
         const w = canvas.width = canvas.offsetWidth;
         const h = canvas.height = canvas.offsetHeight;
         ctx.clearRect(0, 0, w, h);
-        const min = Math.min(...history) * 0.9;
-        const max = Math.max(...history) * 1.1;
-        
         ctx.beginPath();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = '#fb6f92';
+        ctx.lineWidth = 3; ctx.strokeStyle = '#fb6f92';
         history.forEach((p, i) => {
             const x = (i / (history.length - 1)) * w;
-            const y = h - ((p - min) / (max - min)) * h;
+            const y = h - ((p - 65) / (135 - 65)) * h;
             if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
         ctx.stroke();
     }
 
     function drawBoard() {
-        const askA = document.getElementById('ask-area');
-        const bidA = document.getElementById('bid-area');
+        let askH = '', bidH = '';
+        for(let i=3; i>=1; i--) askH += `<div class="board-row" style="color:var(--ask)"><span>¥${Math.min(MAX, price+i)}</span><span>${Math.floor(Math.random()*500)}</span></div>`;
+        for(let i=1; i<=3; i++) bidH += `<div class="board-row" style="color:var(--bid)"><span>¥${Math.max(MIN, price-i)}</span><span>${Math.floor(Math.random()*500)}</span></div>`;
+        document.getElementById('ask-area').innerHTML = askH;
+        document.getElementById('bid-area').innerHTML = bidH;
         document.getElementById('mid-price').innerText = price;
-
-        let askH = '';
-        for(let i=4; i>=1; i--) {
-            let p = price + i + Math.floor(Math.random()*2);
-            askH += `<div class="board-row ask-row"><span>¥${p}</span><span>${Math.floor(Math.random()*999 + 1)}</span></div>`;
-        }
-        askA.innerHTML = askH;
-
-        let bidH = '';
-        for(let i=1; i<=4; i++) {
-            let p = Math.max(1, price - i - Math.floor(Math.random()*2));
-            bidH += `<div class="board-row bid-row"><span>¥${p}</span><span>${Math.floor(Math.random()*999 + 1)}</span></div>`;
-        }
-        bidA.innerHTML = bidH;
+        document.getElementById('cur-price').innerText = price;
     }
 
-    function trade(type, amount) {
+    function trade(pNum, type, amt) {
+        let p = (pNum === 1) ? p1 : p2;
         if (type === 'buy') {
-            let qty = (amount === 'max') ? Math.floor(cash / price) : amount;
-            if (cash >= price * qty && qty > 0) {
-                cash -= price * qty;
-                holding += qty;
-            }
+            let qty = (amt === 'max') ? Math.floor(p.cash / price) : amt;
+            if (p.cash >= price * qty && qty > 0) { p.cash -= price * qty; p.hold += qty; }
         } else {
-            let qty = (amount === 'max') ? holding : amount;
-            if (holding >= qty && qty > 0) {
-                cash += price * qty;
-                holding -= qty;
-            }
+            let qty = (amt === 'max') ? p.hold : amt;
+            if (p.hold >= qty && qty > 0) { p.cash += price * qty; p.hold -= qty; }
         }
         updateUI();
     }
 
     function updateUI() {
-        const total = cash + (holding * price);
-        document.getElementById('total-val').innerText = total.toLocaleString();
-        document.getElementById('cash').innerText = Math.floor(cash).toLocaleString();
-        document.getElementById('holding').innerText = holding.toLocaleString();
-        document.getElementById('current-price').innerText = price;
+        const t1 = p1.cash + (p1.hold * price);
+        const t2 = p2.cash + (p2.hold * price);
         
-        document.getElementById('s1').disabled = holding < 1;
-        document.getElementById('s10').disabled = holding < 10;
-        document.getElementById('smax').disabled = holding < 1;
+        document.getElementById('total-p1').innerText = t1.toLocaleString();
+        document.getElementById('cash-p1').innerText = Math.floor(p1.cash/1000) + 'k';
+        document.getElementById('hold-p1').innerText = p1.hold;
+        
+        document.getElementById('total-p2').innerText = t2.toLocaleString();
+        document.getElementById('cash-p2').innerText = Math.floor(p2.cash/1000) + 'k';
+        document.getElementById('hold-p2').innerText = p2.hold;
+
+        // 勝利判定
+        document.getElementById('card-p1').className = `player-card ${t1 > t2 ? 'winning' : ''}`;
+        document.getElementById('card-p2').className = `player-card ${t2 > t1 ? 'winning' : ''}`;
+
+        // 売りボタン制限
+        document.getElementById('s1-p1').disabled = p1.hold < 1;
+        document.getElementById('sm-p1').disabled = p1.hold < 1;
+        document.getElementById('s1-p2').disabled = p2.hold < 1;
+        document.getElementById('sm-p2').disabled = p2.hold < 1;
     }
 
-    // 0.3秒(300ms)ごとに超高速更新！
-    setInterval(updatePrice, 300);
+    setInterval(updatePrice, 600); // 0.6秒
     window.onload = () => { updatePrice(); };
 </script>
 </body>
