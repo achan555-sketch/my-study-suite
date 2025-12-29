@@ -3,103 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 achan's Study Suite v4 🎀</title>
+    <title>🎀 achan's Royal Suite v6 🎀</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/light.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap');
-
-        :root { 
-            --pink-light: #ffe5ec; 
-            --pink-main: #ff8fab; 
-            --pink-dark: #fb6f92; 
-            --bg: #fff0f3; 
-            --card: #ffffff; 
-            --text: #5c4d50; 
-        }
-
-        body { 
-            background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; 
-            margin: 0; padding: 20px; display: flex; justify-content: center; 
-            background-image: radial-gradient(var(--pink-light) 1px, transparent 1px); background-size: 20px 20px;
-        }
-
+        :root { --pink-light: #ffe5ec; --pink-main: #ff8fab; --pink-dark: #fb6f92; --bg: #fff0f3; --card: #ffffff; --text: #5c4d50; }
+        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; background-image: radial-gradient(var(--pink-light) 1px, transparent 1px); background-size: 20px 20px; }
         .wrapper { width: 100%; max-width: 500px; }
         header { text-align: center; margin-bottom: 30px; }
         h1 { font-weight: 700; letter-spacing: 2px; font-size: 1.6rem; color: var(--pink-dark); margin: 0; }
         .ribbon-icon { font-size: 2.2rem; display: block; animation: float 3s ease-in-out infinite; }
         @keyframes float { 50% { transform: translateY(-8px); } }
 
-        .exam-card { 
-            background: var(--card); border-radius: 35px; padding: 25px; 
-            box-shadow: 0 15px 35px rgba(255, 143, 171, 0.15); 
-            margin-bottom: 30px; border: 3px solid var(--pink-light); position: relative;
-        }
-
-        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .exam-card { background: var(--card); border-radius: 35px; padding: 25px; box-shadow: 0 15px 35px rgba(255, 143, 171, 0.15); margin-bottom: 30px; border: 3px solid var(--pink-light); position: relative; }
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .exam-title { font-size: 1.3rem; font-weight: 700; color: var(--pink-dark); }
         .countdown { font-size: 0.75rem; background: var(--pink-light); color: var(--pink-dark); padding: 6px 15px; border-radius: 20px; font-weight: bold; }
+        .reward-tag { font-size: 0.85rem; background: #fffcfd; padding: 10px; border-radius: 15px; margin-bottom: 20px; display: block; color: var(--pink-dark); border: 1px dashed var(--pink-main); text-align: center; font-weight: 700; }
 
-        .reward-tag { font-size: 0.8rem; background: #fff9fa; padding: 8px 15px; border-radius: 15px; margin-bottom: 20px; display: block; color: var(--pink-main); border: 1px dashed var(--pink-main); }
+        .overall-section { margin-bottom: 25px; padding: 15px; background: #fffcfd; border-radius: 25px; border: 1px solid var(--pink-light); }
+        .bar-outer { background: var(--pink-light); height: 16px; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        .bar-inner { background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); height: 100%; width: 0%; transition: 1s ease; }
 
-        /* Progress UI */
-        .overall-section { margin-bottom: 25px; padding: 20px; background: #fffcfd; border-radius: 25px; border: 1px solid var(--pink-light); }
-        .bar-outer { background: var(--pink-light); height: 16px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        .bar-inner { background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); height: 100%; width: 0%; transition: 1s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        .task-item { margin-top: 25px; padding: 20px; background: white; border-radius: 25px; border: 2px solid var(--pink-light); position: relative; }
+        .percent-badge { position: absolute; top: -12px; right: 20px; background: var(--pink-dark); color: white; padding: 4px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 30px; cursor: pointer; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 10px; background: var(--pink-light); border-radius: 10px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; background: var(--pink-dark); border: 3px solid white; margin-top: -8px; }
 
-        /* Task Item Styles */
-        .task-item { margin-top: 20px; padding: 20px; background: white; border-radius: 25px; border: 2px solid var(--pink-light); position: relative; }
-        .percent-badge { position: absolute; top: -12px; right: 15px; background: var(--pink-dark); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 4px 10px rgba(251, 111, 146, 0.3); }
-        .task-name { font-weight: 700; font-size: 0.9rem; color: var(--text); display: block; margin-bottom: 10px; }
+        .input-group { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
+        .num-input { width: 55px; padding: 5px; border: 2px solid var(--pink-light); border-radius: 10px; text-align: center; font-family: 'Quicksand'; font-weight: 700; color: var(--pink-dark); }
 
-        /* Optimized Slider (Easier to touch/slide) */
-        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 40px; cursor: pointer; }
-        input[type="range"]:focus { outline: none; }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 12px; background: var(--pink-light); border-radius: 10px; }
-        input[type="range"]::-webkit-slider-thumb { 
-            -webkit-appearance: none; height: 32px; width: 32px; border-radius: 50%; 
-            background: var(--pink-dark); cursor: pointer; margin-top: -10px; 
-            border: 4px solid white; box-shadow: 0 4px 12px rgba(251, 111, 146, 0.4); transition: transform 0.2s;
-        }
-        input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
+        .add-zone, .reward-manager { background: white; padding: 25px; border-radius: 35px; border: 3px solid var(--pink-light); margin-top: 30px; }
+        label { font-size: 0.8rem; font-weight: 700; color: var(--pink-dark); margin: 10px 0 5px 5px; display: block; }
+        input[type="text"], select, .date-input { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--pink-light); margin-bottom: 10px; box-sizing: border-box; font-family: 'Quicksand'; outline: none; }
+        .btn-main { background: var(--pink-dark); color: white; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; border: none; cursor: pointer; box-shadow: 0 5px 15px rgba(251, 111, 146, 0.3); }
 
-        .controls { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 10px; }
-        .btn-round { background: var(--pink-light); color: var(--pink-dark); border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
-        .btn-round:hover { background: var(--pink-main); color: white; }
-        .num-display { font-size: 0.9rem; font-weight: 700; color: var(--pink-dark); min-width: 80px; text-align: center; }
-
-        /* Add Zone */
-        .add-zone { background: white; padding: 30px; border-radius: 35px; border: 3px solid var(--pink-light); margin-top: 40px; }
-        label { font-size: 0.8rem; font-weight: 700; color: var(--pink-dark); margin: 10px 0 5px 10px; display: block; }
-        input[type="text"], .date-input { width: 100%; padding: 15px; border-radius: 20px; border: 2px solid var(--pink-light); margin-bottom: 15px; box-sizing: border-box; font-family: 'Quicksand'; outline: none; font-size: 0.9rem; }
-        .btn-main { background: var(--pink-dark); color: white; padding: 18px; border-radius: 25px; font-weight: 700; width: 100%; border: none; cursor: pointer; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(251, 111, 146, 0.3); transition: 0.3s; }
-        .btn-main:hover { transform: translateY(-3px); filter: brightness(1.05); }
-
-        .remove-btn { color: #ccc; font-size: 0.7rem; cursor: pointer; text-decoration: underline; margin-top: 20px; display: block; text-align: center; }
+        .pool-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+        .pool-item { background: var(--pink-light); color: var(--pink-dark); padding: 5px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .del-pool { cursor: pointer; color: var(--pink-dark); opacity: 0.5; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <header>
-        <span class="ribbon-icon">🎀</span>
-        <h1>My Study Dashboard</h1>
-    </header>
+    <header><span class="ribbon-icon">🎀</span><h1>Study Suite v6</h1></header>
 
     <div id="dashboard"></div>
 
     <div class="add-zone">
-        <h3 style="text-align:center; color:var(--pink-dark); margin-top:0;">✨ New Mission ✨</h3>
-        <label>Subject or Exam Name</label>
-        <input type="text" id="new-name" placeholder="e.g. FAR, Boki 2, School Test">
-        
-        <label>Deadline (English Calendar!)</label>
-        <input type="text" id="new-date" class="date-input" placeholder="Select Target Date">
+        <h3 style="text-align:center; color:var(--pink-dark); margin:0 0 15px;">✨ New Mission ✨</h3>
+        <label>Subject</label>
+        <input type="text" id="new-name" placeholder="e.g. Boki Level 2">
+        <label>Deadline</label>
+        <input type="text" id="new-date" class="date-input" placeholder="Select Date">
+        <label>Choose Reward 🎁</label>
+        <select id="reward-select" onchange="toggleCustomReward()">
+            <option value="">-- Select from My List --</option>
+            <option value="CUSTOM">Add Custom Reward...</option>
+        </select>
+        <input type="text" id="custom-reward-input" style="display:none;" placeholder="Type custom reward here...">
+        <button class="btn-main" onclick="addProject()">Create Goal 🎀</button>
+    </div>
 
-        <label>Sweet Reward 🎁</label>
-        <input type="text" id="new-reward" placeholder="e.g. Favorite cake, Shopping!">
-
-        <button class="btn-main" onclick="addProject()">Let's Start! 🎀</button>
+    <div class="reward-manager">
+        <h3 style="color:var(--pink-dark); margin:0 0 10px; font-size:1rem;">🎨 Reward List (Pool)</h3>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="pool-input" placeholder="New reward idea..." style="margin:0;">
+            <button class="btn-main" style="width:80px; padding:10px;" onclick="addToPool()">Add</button>
+        </div>
+        <div id="pool-display" class="pool-list"></div>
     </div>
 </div>
 
@@ -107,121 +81,96 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-    flatpickr("#new-date", { dateFormat: "Y-m-d", minDate: "today", disableMobile: true });
+    flatpickr(".date-input", { dateFormat: "Y-m-d", minDate: "today", disableMobile: true });
 
-    let projects = JSON.parse(localStorage.getItem('achan_kawaii_v4')) || [];
+    let projects = JSON.parse(localStorage.getItem('achan_royal_v6')) || [];
+    let rewardPool = JSON.parse(localStorage.getItem('achan_reward_pool')) || ["New Lip Tint 💄", "Fancy Cake 🍰", "Shopping Trip 🛍️"];
 
     function save() {
-        localStorage.setItem('achan_kawaii_v4', JSON.stringify(projects));
+        localStorage.setItem('achan_royal_v6', JSON.stringify(projects));
+        localStorage.setItem('achan_reward_pool', JSON.stringify(rewardPool));
         render();
+        updatePoolUI();
+    }
+
+    function addToPool() {
+        const val = document.getElementById('pool-input').value;
+        if (val) { rewardPool.push(val); document.getElementById('pool-input').value = ''; save(); }
+    }
+
+    function removePoolItem(idx) { rewardPool.splice(idx, 1); save(); }
+
+    function toggleCustomReward() {
+        const sel = document.getElementById('reward-select').value;
+        document.getElementById('custom-reward-input').style.display = (sel === 'CUSTOM') ? 'block' : 'none';
+    }
+
+    function updatePoolUI() {
+        const display = document.getElementById('pool-display');
+        const select = document.getElementById('reward-select');
+        display.innerHTML = '';
+        
+        // Dropdown update
+        let options = '<option value="">-- Select from My List --</option>';
+        rewardPool.forEach((r, i) => {
+            options += `<option value="${r}">${r}</option>`;
+            display.innerHTML += `<div class="pool-item">${r} <span class="del-pool" onclick="removePoolItem(${i})">✕</span></div>`;
+        });
+        options += '<option value="CUSTOM">Add Custom Reward...</option>';
+        select.innerHTML = options;
     }
 
     function addProject() {
         const name = document.getElementById('new-name').value;
         const date = document.getElementById('new-date').value;
-        const reward = document.getElementById('new-reward').value || "Treat yourself!";
-        if (!name || !date) return alert("Please fill in the details! 🌸");
-        
-        projects.push({
-            id: Date.now(),
-            name, date, reward,
-            tasks: [
-                { id: 1, name: "MCQ / Exercises", current: 0, goal: 100 },
-                { id: 2, name: "Textbook / Chapters", current: 0, goal: 10 }
-            ]
-        });
+        let reward = document.getElementById('reward-select').value;
+        if (reward === 'CUSTOM') reward = document.getElementById('custom-reward-input').value;
+        if (!name || !date || !reward) return alert("Fill in everything! 🌸");
+
+        projects.push({ id: Date.now(), name, date, reward, tasks: [{ id: 1, name: "MCQ", current: 0, goal: 100 }, { id: 2, name: "Chapters", current: 0, goal: 10 }] });
         save();
         document.getElementById('new-name').value = '';
-        document.getElementById('new-reward').value = '';
     }
 
-    function updateValue(projId, taskId, val) {
-        const proj = projects.find(p => p.id === projId);
-        const task = proj.tasks.find(t => t.id === taskId);
-        const oldP = Math.round((task.current / task.goal) * 100);
-        
-        task.current = Math.max(0, Math.min(task.goal, parseInt(val) || 0));
-        
-        const newP = Math.round((task.current / task.goal) * 100);
-        if (newP === 100 && oldP < 100) {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff8fab', '#fb6f92', '#ffffff'] });
-        }
+    function updateValue(pId, tId, f, v) {
+        const p = projects.find(x => x.id === pId);
+        const t = p.tasks.find(x => x.id === tId);
+        const old = Math.round((t.current / t.goal) * 100);
+        t[f] = Math.max(0, parseInt(v) || 0);
+        if (Math.round((t.current / t.goal) * 100) === 100 && old < 100) confetti({ particleCount: 150, spread: 70, colors: ['#ff8fab', '#fb6f92'] });
         save();
     }
 
-    function addTask(projId) {
-        const name = prompt("Task Name?");
-        const goal = prompt("Goal Number?");
-        if (name && goal) {
-            projects.find(p => p.id === projId).tasks.push({ id: Date.now(), name, current: 0, goal: parseInt(goal) });
-            save();
-        }
-    }
-
-    function deleteProject(id) {
-        if (confirm("Delete this goal? 🌸")) {
-            projects = projects.filter(p => p.id !== id);
-            save();
-        }
-    }
+    function deleteProject(id) { if (confirm("Remove goal?")) { projects = projects.filter(x => x.id !== id); save(); } }
 
     function render() {
-        const container = document.getElementById('dashboard');
-        container.innerHTML = '';
-
+        const dash = document.getElementById('dashboard'); dash.innerHTML = '';
         projects.forEach(proj => {
-            const daysLeft = Math.max(0, Math.ceil((new Date(proj.date) - new Date()) / (86400000)));
-
-            let taskHtml = '';
-            let totalCur = 0, totalGoal = 0;
-
+            const days = Math.max(0, Math.ceil((new Date(proj.date) - new Date()) / 86400000));
+            let tHtml = '', tCur = 0, tGoal = 0;
             proj.tasks.forEach(task => {
-                totalCur += task.current;
-                totalGoal += task.goal;
-                const p = Math.round((task.current / task.goal) * 100) || 0;
-                taskHtml += `
-                    <div class="task-item">
-                        <span class="percent-badge">${p}% Done</span>
-                        <span class="task-name">${task.name} 🎀</span>
-                        <input type="range" min="0" max="${task.goal}" value="${task.current}" 
-                               oninput="updateValue(${proj.id}, ${task.id}, this.value)">
-                        <div class="controls">
-                            <button class="btn-round" onclick="updateValue(${proj.id}, ${task.id}, ${task.current - 1})">-</button>
-                            <span class="num-display">${task.current} / ${task.goal}</span>
-                            <button class="btn-round" onclick="updateValue(${proj.id}, ${task.id}, ${task.current + 1})">+</button>
-                        </div>
-                    </div>
-                `;
+                tCur += task.current; tGoal += task.goal;
+                const p = Math.round((task.current/task.goal)*100)||0;
+                tHtml += `<div class="task-item"><span class="percent-badge">${p}%</span>
+                    <div style="font-weight:700; margin-bottom:10px;">${task.name} 🎀</div>
+                    <input type="range" min="0" max="${task.goal}" value="${task.current}" oninput="updateValue(${proj.id},${task.id},'current',this.value)">
+                    <div class="input-group">
+                        <input type="number" class="num-input" value="${task.current}" onchange="updateValue(${proj.id},${task.id},'current',this.value)">
+                        <span class="slash">/</span>
+                        <input type="number" class="num-input" value="${task.goal}" onchange="updateValue(${proj.id},${task.id},'goal',this.value)">
+                    </div></div>`;
             });
-
-            const overallP = totalGoal > 0 ? Math.round((totalCur / totalGoal) * 100) : 0;
-
-            const card = document.createElement('div');
-            card.className = 'exam-card';
-            card.innerHTML = `
-                <div class="exam-header">
-                    <div class="exam-title">${proj.name}</div>
-                    <span class="countdown">✨ ${daysLeft} Days left</span>
-                </div>
+            const overP = tGoal > 0 ? Math.round((tCur/tGoal)*100) : 0;
+            dash.innerHTML += `<div class="exam-card">
+                <div class="exam-header"><div class="exam-title">${proj.name}</div><span class="countdown">✨ ${days} Days ✨</span></div>
                 <div class="reward-tag">🎁 Reward: ${proj.reward}</div>
-                <div class="overall-section">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; color:var(--pink-dark);">
-                        <span>Overall Progress</span>
-                        <span>${overallP}%</span>
-                    </div>
-                    <div class="bar-outer"><div class="bar-inner" style="width:${overallP}%"></div></div>
-                </div>
-                <div>${taskHtml}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px;">
-                    <button class="btn-round" style="width:auto; padding:0 15px; border-radius:15px; font-size:0.75rem; background:var(--pink-dark); color:white;" onclick="addTask(${proj.id})">+ Add Task</button>
-                    <span class="remove-btn" onclick="deleteProject(${proj.id})">remove goal</span>
-                </div>
-            `;
-            container.appendChild(card);
+                <div class="overall-section"><div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;"><span>Overall</span><span>${overP}%</span></div>
+                <div class="bar-outer"><div class="bar-inner" style="width:${overP}%"></div></div></div>
+                ${tHtml}<button class="btn-main" style="width:auto; padding:5px 15px; margin-top:15px; font-size:0.7rem;" onclick="deleteProject(${proj.id})">remove</button></div>`;
         });
     }
 
-    render();
+    window.onload = () => { updatePoolUI(); render(); };
 </script>
 </body>
 </html>
