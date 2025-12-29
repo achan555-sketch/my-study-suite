@@ -3,49 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 Pink Trade Pro v3 🎀</title>
+    <title>🎀 Pink Trade v4: Hyper Liquid 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500&display=swap');
         :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; --ask: #ff4757; --bid: #2ed573; }
         
         body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 10px; box-sizing: border-box; }
         
-        .dashboard { background: white; width: 100%; max-width: 400px; border-radius: 40px; padding: 20px; box-shadow: 0 20px 40px rgba(251, 111, 146, 0.2); border: 4px solid white; }
-        .balance-val { font-size: 1.8rem; font-weight: 700; color: var(--p-dark); text-align: center; margin-bottom: 10px; }
+        .dashboard { background: white; width: 100%; max-width: 400px; border-radius: 40px; padding: 25px; box-shadow: 0 20px 50px rgba(251, 111, 146, 0.3); border: 4px solid white; position: relative; }
+        .balance-val { font-size: 2rem; font-weight: 700; color: var(--p-dark); text-align: center; margin-bottom: 5px; }
 
         /* Chart */
-        .chart-container { background: #fff9fa; border-radius: 20px; height: 100px; margin-bottom: 15px; position: relative; overflow: hidden; border: 1px solid var(--p-light); }
-        canvas { width: 100%; height: 100%; }
-        .price-tag { position: absolute; top: 10px; left: 10px; background: var(--p-dark); color: white; padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; }
+        .chart-container { background: #1e1e1e; border-radius: 20px; height: 120px; margin-bottom: 15px; position: relative; overflow: hidden; }
+        canvas { width: 100%; height: 100%; opacity: 0.8; }
+        .price-tag { position: absolute; top: 10px; left: 10px; background: var(--p-dark); color: white; padding: 5px 12px; border-radius: 12px; font-size: 1rem; font-weight: bold; animation: pulse 0.3s infinite alternate; }
+        @keyframes pulse { from { opacity: 1; } to { opacity: 0.8; } }
 
-        /* 板（Order Book）修正版 */
-        .board-container { background: #1e1e1e; border-radius: 15px; padding: 12px; margin-bottom: 15px; font-family: 'Roboto Mono', monospace; font-size: 0.8rem; color: #eee; }
-        .board-header { display: flex; justify-content: space-between; border-bottom: 1px solid #333; margin-bottom: 5px; font-size: 0.6rem; color: #888; }
-        .board-row { display: flex; justify-content: space-between; padding: 2px 0; }
-        .ask-row { color: var(--ask); }
-        .bid-row { color: var(--bid); }
-        .mid-row { background: #333; color: white; padding: 4px; border-radius: 5px; text-align: center; font-weight: bold; margin: 4px 0; }
+        /* 超高速・板情報 */
+        .board-container { background: #111; border-radius: 15px; padding: 15px; margin-bottom: 20px; font-family: 'Roboto Mono', monospace; font-size: 0.85rem; color: #eee; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .board-header { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 5px; font-size: 0.65rem; color: #666; }
+        .board-row { display: flex; justify-content: space-between; padding: 3px 0; transition: 0.1s; }
+        .ask-row { color: var(--ask); text-shadow: 0 0 5px rgba(255,71,87,0.3); }
+        .bid-row { color: var(--bid); text-shadow: 0 0 5px rgba(46,213,115,0.3); }
+        .mid-row { background: #222; color: #fff; padding: 6px; border-radius: 10px; text-align: center; font-weight: bold; margin: 5px 0; border: 1px solid #444; }
 
-        /* Controls: 1株単位 */
-        .trade-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .trade-col { display: flex; flex-direction: column; gap: 8px; }
-        .btn { border: none; padding: 12px; border-radius: 15px; font-weight: 700; font-family: 'Quicksand'; cursor: pointer; transition: 0.1s; font-size: 0.9rem; }
-        .btn:active { transform: scale(0.95); }
-        .btn-buy { background: var(--ask); color: white; }
-        .btn-sell { background: var(--bid); color: white; }
-        .btn-max { background: var(--p-light); color: var(--p-dark); font-size: 0.7rem; padding: 6px; }
-        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        /* 1株単位コントロール */
+        .trade-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .trade-col { display: flex; flex-direction: column; gap: 10px; }
+        .btn { border: none; padding: 15px; border-radius: 18px; font-weight: 700; font-family: 'Quicksand'; cursor: pointer; transition: 0.1s; font-size: 1rem; color: white; }
+        .btn:active { transform: scale(0.92); }
+        .btn-buy { background: var(--ask); box-shadow: 0 4px 0 #c0392b; }
+        .btn-sell { background: var(--bid); box-shadow: 0 4px 0 #27ae60; }
+        .btn-max { background: var(--p-light); color: var(--p-dark); font-size: 0.75rem; padding: 8px; box-shadow: 0 3px 0 #ffc1d1; }
+        .btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .portfolio-info { margin-top: 15px; font-size: 0.75rem; display: flex; justify-content: space-between; padding: 10px; background: var(--bg); border-radius: 15px; font-weight: bold; }
-        
-        /* Event Flash */
-        .news-flash { font-size: 0.7rem; color: var(--p-dark); font-weight: 700; height: 15px; margin-bottom: 10px; text-align: center; }
+        .portfolio-info { margin-top: 20px; font-size: 0.85rem; display: flex; justify-content: space-between; padding: 15px; background: var(--bg); border-radius: 20px; font-weight: 700; }
+        .news { font-size: 0.7rem; color: var(--p-dark); font-weight: bold; margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div class="dashboard">
-        <div class="news-flash" id="news">Market Open 🎀</div>
+        <div class="news" id="status">🎀 SYSTEM ONLINE - HIGH VOLATILITY</div>
         <div class="balance-val">¥<span id="total-val">100,000</span></div>
 
         <div class="chart-container">
@@ -54,20 +53,20 @@
         </div>
 
         <div class="board-container">
-            <div class="board-header"><span>Price</span><span>Qty</span></div>
+            <div class="board-header"><span>PRICE</span><span>ORDER QTY</span></div>
             <div id="ask-area"></div>
-            <div class="mid-row">MARKET PRICE: ¥<span id="mid-price">100</span></div>
+            <div class="mid-row">🎀 MARKET: ¥<span id="mid-price">100</span></div>
             <div id="bid-area"></div>
         </div>
 
         <div class="trade-zone">
             <div class="trade-col">
-                <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1 🎀</button>
+                <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1</button>
                 <button class="btn btn-buy" onclick="trade('buy', 10)">BUY 10</button>
-                <button class="btn btn-max" onclick="trade('buy', 'max')">BUY MAX</button>
+                <button class="btn btn-max" onclick="trade('buy', 'max')">BUY ALL</button>
             </div>
             <div class="trade-col">
-                <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1 💰</button>
+                <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1</button>
                 <button class="btn btn-sell" id="s10" onclick="trade('sell', 10)">SELL 10</button>
                 <button class="btn btn-max" id="smax" onclick="trade('sell', 'max')">SELL ALL</button>
             </div>
@@ -75,7 +74,7 @@
 
         <div class="portfolio-info">
             <span>Cash: ¥<span id="cash">100,000</span></span>
-            <span>Holding: <span id="holding">0</span>🎀</span>
+            <span>Asset: <span id="holding">0</span> 🎀</span>
         </div>
     </div>
 
@@ -83,68 +82,68 @@
     let cash = 100000;
     let holding = 0;
     let price = 100;
-    let priceHistory = Array(40).fill(100);
+    let history = Array(50).fill(100);
     
     const canvas = document.getElementById('priceChart');
     const ctx = canvas.getContext('2d');
     
-    // 値動きのランダム性を強化
     function updatePrice() {
-        let rand = Math.random();
-        let volatility = 0.08;
-        
-        // 10%の確率で急騰・急落
-        if (rand > 0.95) { volatility = 0.3; document.getElementById('news').innerText = "⚠️ VOLATILITY SPIKE!"; }
-        else if (rand < 0.05) { volatility = 0.2; document.getElementById('news').innerText = "📉 MARKET CRASH?"; }
-        else { document.getElementById('news').innerText = "Stable Market 🎀"; }
+        // かなりランダムな値動き (100から70など急激な変化に対応)
+        let move = (Math.random() - 0.5) * 12; // 通常時
+        if (Math.random() > 0.92) move = (Math.random() - 0.5) * 40; // 激動時
 
-        const change = price * volatility * (Math.random() - 0.49); 
-        price = Math.max(5, Math.floor(price + change));
-        
-        priceHistory.push(price);
-        if (priceHistory.length > 40) priceHistory.shift();
+        price = Math.max(5, Math.floor(price + move));
+        history.push(price);
+        if (history.length > 50) history.shift();
         
         drawChart();
         drawBoard();
         updateUI();
+
+        // ステータス更新
+        if (move > 10) document.getElementById('status').innerText = "🚀 MOONING!";
+        else if (move < -10) document.getElementById('status').innerText = "💀 CRASHING!";
+        else document.getElementById('status').innerText = "🎀 HIGH LIQUIDITY MODE";
     }
 
     function drawChart() {
         const w = canvas.width = canvas.offsetWidth;
         const h = canvas.height = canvas.offsetHeight;
         ctx.clearRect(0, 0, w, h);
-        const min = Math.min(...priceHistory) * 0.9;
-        const max = Math.max(...priceHistory) * 1.1;
+        const min = Math.min(...history) * 0.9;
+        const max = Math.max(...history) * 1.1;
         
         ctx.beginPath();
-        priceHistory.forEach((p, i) => {
-            const x = (i / (priceHistory.length - 1)) * w;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#fb6f92';
+        history.forEach((p, i) => {
+            const x = (i / (history.length - 1)) * w;
             const y = h - ((p - min) / (max - min)) * h;
             if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         });
-        ctx.strokeStyle = '#fb6f92'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.stroke();
     }
 
-    // 板情報の表示（修正完了！）
     function drawBoard() {
-        const askArea = document.getElementById('ask-area');
-        const bidArea = document.getElementById('bid-area');
+        const askA = document.getElementById('ask-area');
+        const bidA = document.getElementById('bid-area');
         document.getElementById('mid-price').innerText = price;
 
-        let askHtml = '';
-        for(let i=3; i>=1; i--) {
-            askHtml += `<div class="board-row ask-row"><span>¥${price + i}</span><span>${Math.floor(Math.random()*500 + 10)}</span></div>`;
+        let askH = '';
+        for(let i=4; i>=1; i--) {
+            let p = price + i + Math.floor(Math.random()*2);
+            askH += `<div class="board-row ask-row"><span>¥${p}</span><span>${Math.floor(Math.random()*999 + 1)}</span></div>`;
         }
-        askArea.innerHTML = askHtml;
+        askA.innerHTML = askH;
 
-        let bidHtml = '';
-        for(let i=1; i<=3; i++) {
-            bidHtml += `<div class="board-row bid-row"><span>¥${Math.max(1, price - i)}</span><span>${Math.floor(Math.random()*500 + 10)}</span></div>`;
+        let bidH = '';
+        for(let i=1; i<=4; i++) {
+            let p = Math.max(1, price - i - Math.floor(Math.random()*2));
+            bidH += `<div class="board-row bid-row"><span>¥${p}</span><span>${Math.floor(Math.random()*999 + 1)}</span></div>`;
         }
-        bidArea.innerHTML = bidHtml;
+        bidA.innerHTML = bidH;
     }
 
-    // 1株、10株、全株の売買処理
     function trade(type, amount) {
         if (type === 'buy') {
             let qty = (amount === 'max') ? Math.floor(cash / price) : amount;
@@ -166,19 +165,16 @@
         const total = cash + (holding * price);
         document.getElementById('total-val').innerText = total.toLocaleString();
         document.getElementById('cash').innerText = Math.floor(cash).toLocaleString();
-        document.getElementById('holding').innerText = holding;
+        document.getElementById('holding').innerText = holding.toLocaleString();
         document.getElementById('current-price').innerText = price;
         
-        // 売りボタンの有効化
         document.getElementById('s1').disabled = holding < 1;
         document.getElementById('s10').disabled = holding < 10;
         document.getElementById('smax').disabled = holding < 1;
-
-        const valEl = document.getElementById('total-val');
-        valEl.style.color = total >= 100000 ? '#fb6f92' : '#888';
     }
 
-    setInterval(updatePrice, 600); // 0.6秒ごとに更新（よりスピーディーに）
+    // 0.3秒(300ms)ごとに超高速更新！
+    setInterval(updatePrice, 300);
     window.onload = () => { updatePrice(); };
 </script>
 </body>
