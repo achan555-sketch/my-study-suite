@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 GRX Pro: Sovereign Mode v23 🎀</title>
+    <title>🎀 GRX Pro: World All-Stars 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { 
@@ -64,6 +64,8 @@
         .btn-sell { background: var(--down); }
 
         .ranking-card { font-size: 0.75rem; background: #0a0a0a; border-radius: 15px; height: 140px; overflow-y: auto; flex-shrink: 0; }
+        .rank-header { padding: 8px 12px; color: var(--p-main); font-weight: 700; font-size: 0.7rem; border-bottom: 1px solid #222; }
+        .rank-list-scroll { overflow-y: auto; flex-grow: 1; scrollbar-width: thin; scrollbar-color: #333 #000; }
         .rank-row { display: flex; justify-content: space-between; padding: 4px 12px; border-bottom: 1px solid #111; }
         .rank-row.me { color: var(--p-main); font-weight: bold; background: rgba(255, 143, 171, 0.1); }
     </style>
@@ -104,7 +106,7 @@
 
     <div class="right-panel">
         <div class="card stats-card">
-            <div><div id="player-name" style="font-size:0.6rem; opacity:0.6;">TRADER: achan</div><div class="total-asset"><span id="total-val">100,000.0</span> <small style="font-size:0.6rem;">GRB</small></div></div>
+            <div><div id="player-name-display" style="font-size:0.6rem; opacity:0.6;">TRADER: achan</div><div class="total-asset"><span id="total-val">100,000.0</span> <small style="font-size:0.6rem;">GRB</small></div></div>
             <div id="rank-display" style="font-size: 0.75rem; font-weight: bold; color: var(--gold);">#?? WORLD</div>
         </div>
 
@@ -125,28 +127,35 @@
         </div>
 
         <div class="card ranking-card">
-            <div style="padding:8px 12px; color:var(--p-main); font-weight:700; font-size:0.7rem; border-bottom:1px solid #222;">🌍 WORLD PARODY RANKING TOP 30</div>
-            <div id="ranking-list"></div>
+            <div class="rank-header">🌍 WORLD TOP 30 CHAMPIONSHIP</div>
+            <div class="rank-list-scroll" id="ranking-list"></div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    let userName = "achan", price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
+    let userName = " name ", price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
     let user = { cash: 100000.0, hold: 0 }, hasWon = false;
     let data1m = [], data5m = [], dataDaily = [], dataWeekly = [];
     let tickCount = 0, candle1m = { o:price, h:price, l:price, c:price }, candle5m = { o:price, h:price, l:price, c:price };
 
+    // 🏆 All-Star Parody Ranking (30 unique names)
     const worldTraders = [
         {n: "Eron Mask 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
         {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000},
-        {n: "Mars Traveler 🛰️", a: 4500000}, {n: "Ribbon Oracle 🔮", a: 4000000}, {n: "Giraffe Queen 🦒", a: 3500000}
-    ].concat(Array.from({length:21}, (_,i) => ({n:`Bot-${i+1}`, a: (21-i)*120000})));
+        {n: "Bernard Lux 👜", a: 4500000}, {n: "Giraffe Queen 🦒", a: 3500000}, {n: "Mars Traveler 🛰️", a: 3000000},
+        {n: "Ribbon Oracle 🔮", a: 2500000}, {n: "T Elite 🏢", a: 2000000}, {n: "accounitng Master 💮", a: 1800000},
+        {n: "CPA Fighter 🇺🇸", a: 1600000}, {n: "Trader S 🎀", a: 1400000}, {n: "Larry G-Search 🔍", a: 1200000},
+        {n: "Steve Ball-Dunk 🏀", a: 1100000}, {n: "Larry Oracle 💾", a: 1000000}, {n: "Michael TV 📺", a: 950000},
+        {n: "Carlos Slim-Line 📞", a: 850000}, {n: "Mukesh Energy 🏗️", a: 750000}, {n: "Amancio Zara 👕", a: 650000},
+        {n: "Night Owl 🦉", a: 550000}, {n: "Whale Watching 🐳", a: 450000}, {n: "Coffee Addict ☕", a: 350000},
+        {n: "Lucky Girl ✨", a: 300000}, {n: "Fearless 💃", a: 250000}, {n: "Smart AI 🦾", a: 200000},
+        {n: "abc 🤖", a: 150000}, {n: "Empty Pocket 💸", a: 100000}, {n: "Paper Hands 📄", a: 80000}
+    ];
 
     function preGenerateData() {
         let p = price;
-        // 1M & 5M
         for(let i=0; i<30; i++) {
             p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*3));
             data1m.push({o:p, h:p+0.5, l:p-0.5, c:p});
@@ -155,28 +164,22 @@
             p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*5));
             data5m.push({o:p, h:p+1, l:p-1, c:p});
         }
-        // DAILY (Proper bars)
         p = price;
         for(let i=0; i<30; i++) {
-            let o = p + (Math.random()-0.5)*8;
-            let c = o + (Math.random()-0.5)*12;
-            dataDaily.push({o:o, h:Math.max(o,c)+2, l:Math.min(o,c)-2, c:c});
-            p = c;
+            let o = p + (Math.random()-0.5)*8; let c = o + (Math.random()-0.5)*12;
+            dataDaily.push({o:o, h:Math.max(o,c)+2, l:Math.min(o,c)-2, c:c}); p = c;
         }
-        // WEEKLY (Proper bars)
         p = price;
         for(let i=0; i<30; i++) {
-            let o = p + (Math.random()-0.5)*15;
-            let c = o + (Math.random()-0.5)*25;
-            dataWeekly.push({o:o, h:Math.max(o,c)+5, l:Math.min(o,c)-5, c:c});
-            p = c;
+            let o = p + (Math.random()-0.5)*15; let c = o + (Math.random()-0.5)*25;
+            dataWeekly.push({o:o, h:Math.max(o,c)+5, l:Math.min(o,c)-5, c:c}); p = c;
         }
         price = data1m[data1m.length-1].c;
     }
 
     function startGame() {
         userName = document.getElementById('user-name-input').value || "Trader";
-        document.getElementById('player-name').innerText = `TRADER: ${userName}`;
+        document.getElementById('player-name-display').innerText = `TRADER: ${userName}`;
         document.getElementById('start-overlay').style.display = 'none';
         preGenerateData(); setInterval(updateMarket, 600);
     }
@@ -203,14 +206,10 @@
         ctx.scale(2,2); const cw = w/2, ch = h/2; ctx.clearRect(0,0,cw,ch);
         const drawData = [...data]; if(forming) drawData.push(forming);
         if(drawData.length === 0) return;
-
-        // Auto Scaling Logic (v21 back in action)
         let minV = drawData[0].l, maxV = drawData[0].h;
         drawData.forEach(d => { minV = Math.min(minV, d.l); maxV = Math.max(maxV, d.h); });
-        let range = (maxV - minV) || 1;
-        let pad = range * 0.15;
+        let range = (maxV - minV) || 1; let pad = range * 0.15;
         const getY = (val) => ch - ((val - (minV - pad)) / (range + pad * 2)) * ch;
-
         const space = cw / 35;
         drawData.forEach((d, i) => {
             const x = i * space + (cw - drawData.length * space); 
@@ -236,14 +235,23 @@
         document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 1});
         document.getElementById('cash-val').innerText = (user.cash/1000).toFixed(1) + 'k';
         document.getElementById('hold-val').innerText = user.hold;
+        
+        // 🏆 Dynamic Ranking merging User
         const all = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
         const myRank = all.findIndex(t => t.me) + 1;
         document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
         
         if (myRank === 1 && !hasWon) triggerSovereignMode();
         
-        let listH = ''; all.slice(0, 30).forEach((l, i) => { listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
+        let listH = ''; 
+        // Show Top 30
+        all.slice(0, 30).forEach((l, i) => {
+            listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`;
+        });
         document.getElementById('ranking-list').innerHTML = listH;
+        
+        document.getElementById('s1').disabled = user.hold < 1; 
+        document.getElementById('smax').disabled = user.hold < 1;
     }
 
     function triggerSovereignMode() {
