@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 GRX Pro: World All-Stars 🎀</title>
+    <title>🎀 GRX Pro: Developer Edition v25 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { 
@@ -38,7 +38,7 @@
             flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px;
         }
 
-        /* Layout (Balanced 50:50) */
+        /* Layout */
         .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; }
         .left-panel { flex: 0 0 50%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
         .chart-box { background: #000; border-radius: 12px; padding: 8px; border: 1px solid #333; position: relative; aspect-ratio: 1/1; }
@@ -65,7 +65,7 @@
 
         .ranking-card { font-size: 0.75rem; background: #0a0a0a; border-radius: 15px; height: 140px; overflow-y: auto; flex-shrink: 0; }
         .rank-header { padding: 8px 12px; color: var(--p-main); font-weight: 700; font-size: 0.7rem; border-bottom: 1px solid #222; }
-        .rank-list-scroll { overflow-y: auto; flex-grow: 1; scrollbar-width: thin; scrollbar-color: #333 #000; }
+        .rank-list-scroll { overflow-y: auto; flex-grow: 1; }
         .rank-row { display: flex; justify-content: space-between; padding: 4px 12px; border-bottom: 1px solid #111; }
         .rank-row.me { color: var(--p-main); font-weight: bold; background: rgba(255, 143, 171, 0.1); }
     </style>
@@ -109,13 +109,9 @@
             <div><div id="player-name-display" style="font-size:0.6rem; opacity:0.6;">TRADER: achan</div><div class="total-asset"><span id="total-val">100,000.0</span> <small style="font-size:0.6rem;">GRB</small></div></div>
             <div id="rank-display" style="font-size: 0.75rem; font-weight: bold; color: var(--gold);">#?? WORLD</div>
         </div>
-
         <div class="card board-card">
-            <div class="scroll-area">
-                <div id="ask-rows"></div><div class="mid-price-line" id="mid-val-display">100.0</div><div id="bid-rows"></div>
-            </div>
+            <div class="scroll-area"><div id="ask-rows"></div><div class="mid-price-line" id="mid-val-display">100.0</div><div id="bid-rows"></div></div>
         </div>
-
         <div class="card trade-card">
             <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1</button>
             <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1</button>
@@ -125,7 +121,6 @@
                 <span>CASH: <span id="cash-val">100.0k</span></span><span>HOLD: <span id="hold-val">0</span></span>
             </div>
         </div>
-
         <div class="card ranking-card">
             <div class="rank-header">🌍 WORLD TOP 30 CHAMPIONSHIP</div>
             <div class="rank-list-scroll" id="ranking-list"></div>
@@ -135,45 +130,33 @@
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    let userName = " name ", price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
+    let userName = "achan", price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
     let user = { cash: 100000.0, hold: 0 }, hasWon = false;
     let data1m = [], data5m = [], dataDaily = [], dataWeekly = [];
     let tickCount = 0, candle1m = { o:price, h:price, l:price, c:price }, candle5m = { o:price, h:price, l:price, c:price };
 
-    // 🏆 All-Star Parody Ranking (30 unique names)
+    // 🏆 Generic Parody Ranking Top 30
     const worldTraders = [
         {n: "Eron Mask 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
         {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000},
         {n: "Bernard Lux 👜", a: 4500000}, {n: "Giraffe Queen 🦒", a: 3500000}, {n: "Mars Traveler 🛰️", a: 3000000},
-        {n: "Ribbon Oracle 🔮", a: 2500000}, {n: "T Elite 🏢", a: 2000000}, {n: "accounitng Master 💮", a: 1800000},
-        {n: "CPA Fighter 🇺🇸", a: 1600000}, {n: "Trader S 🎀", a: 1400000}, {n: "Larry G-Search 🔍", a: 1200000},
-        {n: "Steve Ball-Dunk 🏀", a: 1100000}, {n: "Larry Oracle 💾", a: 1000000}, {n: "Michael TV 📺", a: 950000},
-        {n: "Carlos Slim-Line 📞", a: 850000}, {n: "Mukesh Energy 🏗️", a: 750000}, {n: "Amancio Zara 👕", a: 650000},
-        {n: "Night Owl 🦉", a: 550000}, {n: "Whale Watching 🐳", a: 450000}, {n: "Coffee Addict ☕", a: 350000},
-        {n: "Lucky Girl ✨", a: 300000}, {n: "Fearless 💃", a: 250000}, {n: "Smart AI 🦾", a: 200000},
-        {n: "abc 🤖", a: 150000}, {n: "Empty Pocket 💸", a: 100000}, {n: "Paper Hands 📄", a: 80000}
+        {n: "Ribbon Oracle 🔮", a: 2500000}, {n: "Larry G-Search 🔍", a: 2000000}, {n: "Steve Ball-Dunk 🏀", a: 1800000},
+        {n: "Larry Oracle 💾", a: 1600000}, {n: "Michael TV 📺", a: 1400000}, {n: "Carlos Slim-Line 📞", a: 1200000},
+        {n: "Mukesh Energy 🏗️", a: 1100000}, {n: "Amancio Zara 👕", a: 1000000}, {n: "Night Owl 🦉", a: 950000},
+        {n: "Whale Watching 🐳", a: 850000}, {n: "Coffee Addict ☕", a: 750000}, {n: "Lucky Girl ✨", a: 650000},
+        {n: "Fearless 💃", a: 550000}, {n: "Smart AI 🦾", a: 450000}, {n: "Diamond Hands 💎", a: 350000},
+        {n: "Paper Hands 📄", a: 250000}, {n: "Option King 👑", a: 200000}, {n: "Forex Ghost 👻", a: 150000},
+        {n: "Bull Hunter 🐂", a: 100000}, {n: "Bear Trap 🐻", a: 80000}, {n: "Newbie Bot 🤖", a: 50000}
     ];
 
     function preGenerateData() {
         let p = price;
-        for(let i=0; i<30; i++) {
-            p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*3));
-            data1m.push({o:p, h:p+0.5, l:p-0.5, c:p});
-        }
-        for(let i=0; i<30; i++) {
-            p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*5));
-            data5m.push({o:p, h:p+1, l:p-1, c:p});
-        }
+        for(let i=0; i<30; i++) { p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*3)); data1m.push({o:p, h:p+0.5, l:p-0.5, c:p}); }
+        for(let i=0; i<30; i++) { p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*5)); data5m.push({o:p, h:p+1, l:p-1, c:p}); }
         p = price;
-        for(let i=0; i<30; i++) {
-            let o = p + (Math.random()-0.5)*8; let c = o + (Math.random()-0.5)*12;
-            dataDaily.push({o:o, h:Math.max(o,c)+2, l:Math.min(o,c)-2, c:c}); p = c;
-        }
+        for(let i=0; i<30; i++) { let o = p + (Math.random()-0.5)*8; let c = o + (Math.random()-0.5)*12; dataDaily.push({o:o, h:Math.max(o,c)+2, l:Math.min(o,c)-2, c:c}); p = c; }
         p = price;
-        for(let i=0; i<30; i++) {
-            let o = p + (Math.random()-0.5)*15; let c = o + (Math.random()-0.5)*25;
-            dataWeekly.push({o:o, h:Math.max(o,c)+5, l:Math.min(o,c)-5, c:c}); p = c;
-        }
+        for(let i=0; i<30; i++) { let o = p + (Math.random()-0.5)*15; let c = o + (Math.random()-0.5)*25; dataWeekly.push({o:o, h:Math.max(o,c)+5, l:Math.min(o,c)-5, c:c}); p = c; }
         price = data1m[data1m.length-1].c;
     }
 
@@ -182,19 +165,23 @@
         document.getElementById('player-name-display').innerText = `TRADER: ${userName}`;
         document.getElementById('start-overlay').style.display = 'none';
         preGenerateData(); setInterval(updateMarket, 600);
+        // 🚀 Victory Shortcut
+        window.addEventListener('keydown', (e) => { if(e.key.toLowerCase() === 'v') triggerVictoryShortcut(); });
+    }
+
+    function triggerVictoryShortcut() {
+        user.cash = 100000000; // Gift 100M
+        updateUI();
     }
 
     function updateMarket() {
         if(hasWon) return;
-        lastPrice = price;
-        price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*3.5));
-        tickCount++;
+        lastPrice = price; price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*3.5)); tickCount++;
         candle1m.h = Math.max(candle1m.h, price); candle1m.l = Math.min(candle1m.l, price); candle1m.c = price;
         if (tickCount % 5 === 0) {
             data1m.push({...candle1m}); if(data1m.length>30) data1m.shift();
             candle5m.h = Math.max(candle5m.h, candle1m.h); candle5m.l = Math.min(candle5m.l, candle1m.l); candle5m.c = candle1m.c;
-            if(tickCount === 5) candle5m.o = candle1m.o;
-            candle1m = { o:price, h:price, l:price, c:price };
+            if(tickCount === 5) candle5m.o = candle1m.o; candle1m = { o:price, h:price, l:price, c:price };
         }
         if (tickCount % 25 === 0) { data5m.push({...candle5m}); if(data5m.length>30) data5m.shift(); candle5m = { o:price, h:price, l:price, c:price }; tickCount = 0; }
         drawAllCharts(); drawBoard(); updateUI();
@@ -235,54 +222,29 @@
         document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 1});
         document.getElementById('cash-val').innerText = (user.cash/1000).toFixed(1) + 'k';
         document.getElementById('hold-val').innerText = user.hold;
-        
-        // 🏆 Dynamic Ranking merging User
         const all = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
         const myRank = all.findIndex(t => t.me) + 1;
         document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
-        
         if (myRank === 1 && !hasWon) triggerSovereignMode();
-        
-        let listH = ''; 
-        // Show Top 30
-        all.slice(0, 30).forEach((l, i) => {
-            listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`;
-        });
+        let listH = ''; all.slice(0, 30).forEach((l, i) => { listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
         document.getElementById('ranking-list').innerHTML = listH;
-        
-        document.getElementById('s1').disabled = user.hold < 1; 
-        document.getElementById('smax').disabled = user.hold < 1;
     }
 
     function triggerSovereignMode() {
-        hasWon = true;
-        document.getElementById('shatter-overlay').classList.add('shatter-active');
-        setTimeout(() => {
-            document.getElementById('main-container').style.filter = 'blur(10px)';
-            document.getElementById('god-overlay').style.display = 'flex';
-            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-        }, 300);
+        hasWon = true; document.getElementById('shatter-overlay').classList.add('shatter-active');
+        setTimeout(() => { document.getElementById('main-container').style.filter = 'blur(10px)'; document.getElementById('god-overlay').style.display = 'flex'; confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } }); }, 300);
     }
 
     const quotes = {
-        ascension: [
-            "True sovereignty is not in winning the game, but in writing the rules.",
-            "Markets are made by the daring, and inherited by the wise.",
-            "Greatness begins when you stop following the trend and start becoming it."
-        ],
-        judgment: [
-            "Even a king is a servant to time.",
-            "To reach the stars, one must first embrace the abyss.",
-            "Hubris is the tax paid by the powerful."
-        ]
+        ascension: ["True sovereignty is not in winning the game, but in writing the rules.", "Markets are made by the daring, and inherited by the wise.", "Greatness begins when you stop following the trend and start becoming it."],
+        judgment: ["Even a king is a servant to time.", "To reach the stars, one must first embrace the abyss.", "Hubris is the tax paid by the powerful."]
     };
 
     function divineChoice(type) {
-        const isJudgment = (type === 'judgment');
         document.getElementById('quote-screen').style.display = 'flex';
         document.getElementById('quote-title').innerText = type.toUpperCase();
-        document.getElementById('quote-title').style.color = isJudgment ? 'var(--up)' : 'var(--gold)';
-        const pool = isJudgment ? quotes.judgment : quotes.ascension;
+        document.getElementById('quote-title').style.color = (type === 'judgment') ? 'var(--up)' : 'var(--gold)';
+        const pool = (type === 'judgment') ? quotes.judgment : quotes.ascension;
         document.getElementById('quote-text').innerText = pool[Math.floor(Math.random()*pool.length)];
     }
 
