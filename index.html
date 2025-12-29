@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Ribbon Exchange: Sovereign v29</title>
+    <title>Global Ribbon Exchange: Sovereign v30</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0d0d0d; --card: #1a1a1a; --up: #ff3131; --down: #00e676; --text: #ffffff; --gold: #ffd700; }
@@ -35,13 +35,13 @@
 <div id="start-overlay">
     <span style="font-size:3.5rem;">🌍</span>
     <h1>GLOBAL RIBBON EXCHANGE</h1>
-    <input type="text" id="user-name-input" style="padding:15px; border-radius:15px; border:3px solid #ffe5ec; width:300px; font-size:1.3rem; text-align:center; margin-bottom:20px; outline:none;" placeholder="Enter Your Name" maxlength="12">
+    <input type="text" id="user-name-input" style="padding:15px; border-radius:15px; border:3px solid #ffe5ec; width:300px; font-size:1.3rem; text-align:center; margin-bottom:20px; outline:none;" placeholder="Enter Your Trader Name" maxlength="12">
     <button onclick="startGame()" style="background:#fb6f92; color:white; border:none; padding:15px 50px; border-radius:15px; cursor:pointer; font-weight:700; font-size:1.3rem;">ENTER CHAMPIONSHIP</button>
 </div>
 
 <div id="god-overlay">
     <h1 style="color:var(--gold); font-size:3.5rem; text-shadow:0 0 30px var(--gold);">SOVEREIGN PATH</h1>
-    <p style="font-size:1.5rem; margin-bottom:40px; color:rgba(255,255,255,0.7);">The world is shattered. Choose your legacy.</p>
+    <p style="font-size:1.5rem; margin-bottom:40px; color:rgba(255,255,255,0.7);">The world is shattered. Choose your destiny.</p>
     <div>
         <button class="god-btn" onclick="divineChoice(0)">PATH ALPHA</button>
         <button class="god-btn" onclick="divineChoice(1)">PATH OMEGA</button>
@@ -79,7 +79,10 @@
                 <span>CASH: <span id="cash-val">100.0k</span></span><span>HOLD: <span id="hold-val">0</span></span>
             </div>
         </div>
-        <div class="card" style="font-size:0.75rem; background:#0a0a0a; height:150px; overflow-y:auto;"><div id="ranking-list"></div></div>
+        <div class="card" style="font-size:0.8rem; background:#0a0a0a; height:160px; overflow-y:auto; flex-shrink:0;">
+            <div style="padding:8px 12px; color:var(--p-main); font-weight:700; border-bottom:1px solid #222;">🌍 WORLD TOP 30</div>
+            <div id="ranking-list"></div>
+        </div>
     </div>
 </div>
 
@@ -89,7 +92,19 @@
     let data1m = [], data5m = [], dataDaily = [], dataWeekly = [], tickCount = 0;
     let candle1m = { o:price, h:price, l:price, c:price }, candle5m = { o:price, h:price, l:price, c:price };
 
-    const worldTraders = [{n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000}, {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000}].concat(Array.from({length:24}, (_,i) => ({n:`ExpertTrader-${i+1}`, a: (24-i)*220000})));
+    // 🏆 Realistic User Names Ranking
+    const worldTraders = [
+        {n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
+        {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000},
+        {n: "Alpha_King_99", a: 4500000}, {n: "TrendFollower_X", a: 4000000}, {n: "CryptoWizard88", a: 3500000},
+        {n: "WallSt_Wolf", a: 3000000}, {n: "Sakura_Trader", a: 2500000}, {n: "BlueChip_Master", a: 2100000},
+        {n: "Global_Macro_JP", a: 1800000}, {n: "Scalp_Queen", a: 1550000}, {n: "GoldenCross_7", a: 1300000},
+        {n: "PivotPoint_Boss", a: 1100000}, {n: "Daytrade_Samurai", a: 950000}, {n: "HedgeFund_Ghost", a: 820000},
+        {n: "Bull_Rider_Intl", a: 710000}, {n: "CandleStick_Genie", a: 620000}, {n: "HighFreq_Scalper", a: 540000},
+        {n: "Fibonacci_Fanatic", a: 470000}, {n: "RSI_Overbought", a: 410000}, {n: "Bollinger_Bandit", a: 360000},
+        {n: "Volatility_God", a: 320000}, {n: "MarginCall_Survivor", a: 280000}, {n: "Dividend_Hunter", a: 240000},
+        {n: "Liquid_Asset_PRO", a: 210000}, {n: "Market_Maker_Z", a: 180000}, {n: "Stealth_Invest", a: 150000}
+    ];
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(f, t, d) { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d); }
@@ -166,13 +181,20 @@
         document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits:1});
         document.getElementById('cash-val').innerText = (user.cash/1000).toFixed(1) + 'k';
         document.getElementById('hold-val').innerText = user.hold;
+        
+        // 🏆 Dynamic Integration of User into Top 30
         const all = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
-        const myRank = all.findIndex(t => t.me) + 1; document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
+        const myRank = all.findIndex(t => t.me) + 1; 
+        document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
+        
         if (myRank === 1 && !hasWon) {
             hasWon = true; createShatter();
             setTimeout(() => { document.getElementById('main-container').style.filter = 'blur(15px)'; document.getElementById('god-overlay').style.display = 'flex'; }, 700);
         }
-        let listH = ''; all.slice(0, 30).forEach((l, i) => { listH += `<div style="display:flex; justify-content:space-between; padding:5px 12px; border-bottom:1px solid #222; ${l.me?'color:var(--p-main); font-weight:bold; background:rgba(255,143,171,0.1);':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
+        
+        let listH = ''; all.slice(0, 30).forEach((l, i) => { 
+            listH += `<div style="display:flex; justify-content:space-between; padding:5px 12px; border-bottom:1px solid #222; ${l.me?'color:var(--p-main); font-weight:bold; background:rgba(255,143,171,0.1);':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; 
+        });
         document.getElementById('ranking-list').innerHTML = listH;
     }
 
