@@ -3,59 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 Money Clicker 🎀</title>
+    <title>🎀 achan's Pink Trade 🎀</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap');
-        body { background: #fff0f3; color: #fb6f92; font-family: 'Quicksand', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        h1 { font-size: 3rem; margin: 0; }
-        .score-box { background: white; padding: 20px 40px; border-radius: 30px; border: 4px solid #ffe5ec; box-shadow: 0 10px 20px rgba(251, 111, 146, 0.2); margin-bottom: 30px; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+        :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; }
         
-        /* クリックする対象（今はただの丸） */
-        .click-target {
-            width: 200px; height: 200px; background: #ff8fab; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 4rem; cursor: pointer; user-select: none;
-            box-shadow: 0 15px 30px rgba(251, 111, 146, 0.4);
-            transition: transform 0.1s; border: 5px solid white;
-        }
-        .click-target:active { transform: scale(0.95); }
+        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Dashboard */
+        .dashboard { background: white; width: 90%; max-width: 450px; border-radius: 40px; padding: 30px; box-shadow: 0 20px 40px rgba(251, 111, 146, 0.15); border: 4px solid white; text-align: center; }
+        .balance-label { font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 2px; }
+        .balance-val { font-size: 2.2rem; font-weight: 700; color: var(--p-dark); margin-bottom: 20px; }
 
-        /* クリックした時のエフェクト用 */
-        .particle { position: absolute; pointer-events: none; animation: rise 1s ease-out forwards; font-weight: bold; color: #fb6f92; }
-        @keyframes rise { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-100px); } }
+        /* Chart Area */
+        .chart-container { background: #fff9fa; border-radius: 20px; height: 150px; margin-bottom: 20px; position: relative; overflow: hidden; border: 1px solid var(--p-light); }
+        canvas { width: 100%; height: 100%; }
+        .price-tag { position: absolute; top: 10px; right: 15px; background: var(--p-dark); color: white; padding: 4px 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; }
+
+        /* Trade Controls */
+        .trade-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn { border: none; padding: 18px; border-radius: 20px; font-weight: 700; font-family: 'Quicksand'; font-size: 1.1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .btn:active { transform: scale(0.95); }
+        .btn-buy { background: var(--p-dark); color: white; }
+        .btn-sell { background: var(--p-light); color: var(--p-dark); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* Portfolio */
+        .portfolio-info { margin-top: 20px; font-size: 0.8rem; display: flex; justify-content: space-between; padding: 10px; background: var(--bg); border-radius: 15px; }
+        
+        .history { font-size: 0.7rem; margin-top: 15px; opacity: 0.5; height: 40px; overflow: hidden; }
     </style>
 </head>
 <body>
 
-    <div class="score-box">
-        <span>¥</span><span id="score">0</span>
+    <div class="dashboard">
+        <div class="balance-label">Total Capital</div>
+        <div class="balance-val">¥<span id="total-val">100,000</span></div>
+
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+            <div class="price-tag">¥<span id="current-price">100</span></div>
+        </div>
+
+        <div class="trade-zone">
+            <button class="btn btn-buy" id="buy-btn" onclick="buyAll()">BUY ALL 🎀</button>
+            <button class="btn btn-sell" id="sell-btn" onclick="sellAll()" disabled>SELL ALL ✨</button>
+        </div>
+
+        <div class="portfolio-info">
+            <span>Cash: ¥<span id="cash">100,000</span></span>
+            <span>Ribbons: <span id="holding">0</span></span>
+        </div>
+
+        <div class="history" id="history-log">Welcome to Pink Market! Buy low, Sell high!</div>
     </div>
 
-    <div class="click-target" onclick="clickAction(event)">💰</div>
-
-    <p style="margin-top: 30px; opacity: 0.7;">Click to earn money!</p>
-
 <script>
-    let score = 0;
-    const scoreEl = document.getElementById('score');
-
-    function clickAction(event) {
-        // スコア加算
-        score += 100;
-        scoreEl.innerText = score.toLocaleString();
-
-        // エフェクト表示（クリックした場所に「+100」を出す）
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.innerText = '+ ¥100';
-        particle.style.left = `${event.clientX - 20}px`;
-        particle.style.top = `${event.clientY - 20}px`;
-        document.body.appendChild(particle);
-
-        // 1秒後にエフェクトを消す
-        setTimeout(() => particle.remove(), 1000);
+    let cash = 100000;
+    let holding = 0;
+    let price = 100;
+    let priceHistory = Array(50).fill(100);
+    
+    const canvas = document.getElementById('priceChart');
+    const ctx = canvas.getContext('2d');
+    
+    // 株価の動きをシミュレート
+    function updatePrice() {
+        const volatility = 0.05; // 変動率
+        const change = price * volatility * (Math.random() - 0.48); // 若干上がりやすく
+        price = Math.max(10, Math.floor(price + change));
+        
+        priceHistory.push(price);
+        if (priceHistory.length > 50) priceHistory.shift();
+        
+        drawChart();
+        updateUI();
     }
-</script>
 
+    function drawChart() {
+        const w = canvas.width = canvas.offsetWidth;
+        const h = canvas.height = canvas.offsetHeight;
+        ctx.clearRect(0, 0, w, h);
+        
+        ctx.beginPath();
+        ctx.strokeStyle = '#fb6f92';
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        
+        const min = Math.min(...priceHistory) * 0.9;
+        const max = Math.max(...priceHistory) * 1.1;
+        
+        priceHistory.forEach((p, i) => {
+            const x = (i / (priceHistory.length - 1)) * w;
+            const y = h - ((p - min) / (max - min)) * h;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    }
+
+    function buyAll() {
+        if (cash < price) return;
+        holding = Math.floor(cash / price);
+        cash = cash % price;
+        log(`Bought ${holding} ribbons at ¥${price}`);
+        updateUI();
+    }
+
+    function sellAll() {
+        if (holding === 0) return;
+        const gain = holding * price;
+        cash += gain;
+        log(`Sold everything for ¥${gain.toLocaleString()}!`);
+        holding = 0;
+        updateUI();
+    }
+
+    function log(msg) {
+        document.getElementById('history-log').innerText = msg;
+    }
+
+    function updateUI() {
+        const total = cash + (holding * price);
+        document.getElementById('total-val').innerText = total.toLocaleString();
+        document.getElementById('cash').innerText = Math.floor(cash).toLocaleString();
+        document.getElementById('holding').innerText = holding;
+        document.getElementById('current-price').innerText = price;
+        
+        document.getElementById('buy-btn').disabled = cash < price;
+        document.getElementById('sell-btn').disabled = holding === 0;
+
+        // 全財産の増減で色を変える
+        const valEl = document.getElementById('total-val');
+        if (total > 100000) valEl.style.color = '#fb6f92';
+        else if (total < 100000) valEl.style.color = '#5c4d50';
+    }
+
+    setInterval(updatePrice, 800); // 0.8秒ごとに価格更新
+    window.onload = () => {
+        drawChart();
+        updateUI();
+    };
+</script>
 </body>
 </html>
