@@ -3,97 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goal Tracker | achan555</title>
+    <title>Exam Master | achan555</title>
     <style>
-        :root {
-            --bg: #f8f9fa;
-            --accent: #0984e3;
-            --text: #2d3436;
-        }
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: var(--text);
-            font-family: 'Helvetica Neue', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; margin: 0;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 40px; border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 85%; max-width: 450px; text-align: center;
-        }
-        .days-num { font-size: 5rem; font-weight: 100; color: var(--accent); line-height: 1; }
-        .days-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; }
-        .progress-container { margin: 30px 0; }
-        .bar-outer { background: #dfe6e9; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 10px; }
-        .bar-inner { background: var(--accent); height: 100%; width: 0%; transition: width 1s; }
-        .settings { display: none; text-align: left; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px; }
-        input { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { background: var(--text); color: white; border: none; padding: 12px; border-radius: 20px; width: 100%; cursor: pointer; }
-        .toggle-btn { background: none; color: var(--text); opacity: 0.5; font-size: 0.8rem; border: none; margin-top: 20px; cursor: pointer; }
+        :root { --accent: #0984e3; --bg: #f8f9fa; --text: #2d3436; }
+        body { background: var(--bg); font-family: 'Helvetica Neue', Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; color: var(--text); }
+        .container { width: 100%; max-width: 480px; }
+        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .days-display { text-align: center; }
+        .days-num { font-size: 5rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 5px; }
+        .total-bar { background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .total-fill { background: linear-gradient(90deg, #74b9ff, var(--accent)); height: 100%; width: 0%; transition: 1s ease; }
+        
+        .task-card { background: white; padding: 15px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 5px solid var(--accent); }
+        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .task-title { font-weight: bold; font-size: 1rem; border: none; width: 60%; background: transparent; }
+        .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .counter-btn { background: #f1f2f6; border: none; border-radius: 8px; padding: 5px 12px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .counter-btn:hover { background: #dfe6e9; }
+        .num-input { width: 50px; border: 1px solid #eee; border-radius: 5px; text-align: center; padding: 3px; font-size: 0.9rem; }
+        
+        .add-zone { display: flex; gap: 10px; margin-top: 20px; }
+        select, .btn { padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 0.9rem; }
+        .btn-primary { background: var(--accent); color: white; border: none; flex: 1; font-weight: bold; cursor: pointer; }
+        .delete-btn { color: #ff7675; background: none; border: none; cursor: pointer; font-size: 0.8rem; }
+        
+        .config-box { font-size: 0.8rem; margin-top: 40px; padding: 20px; background: #eee; border-radius: 15px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2 id="title-display">EXAM GOAL</h2>
-    <div class="days-num" id="days-count">00</div>
-    <div class="days-label">Days to go</div>
-
-    <div class="progress-container">
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
-            <span id="progress-text">Progress: 0 / 100</span>
-            <span id="percent-text">0%</span>
+<div class="container">
+    <div class="card days-display">
+        <h2 id="exam-title" style="margin:0; font-weight:300;">Exam Goal</h2>
+        <div class="days-num" id="days-count">00</div>
+        <p style="margin:0; opacity:0.5; font-size:0.8rem; letter-spacing:3px;">DAYS TO GO</p>
+        
+        <div style="display:flex; justify-content:space-between; margin-top:30px; font-size:0.9rem;">
+            <span>Overall Progress</span>
+            <span id="total-percent" style="font-weight:bold;">0%</span>
         </div>
-        <div class="bar-outer"><div class="bar-inner" id="bar"></div></div>
+        <div class="total-bar"><div class="total-fill" id="total-fill"></div></div>
     </div>
 
-    <button class="toggle-btn" onclick="toggleSettings()">⚙️ Settings</button>
+    <div id="tasks-area"></div>
 
-    <div class="settings" id="settings">
-        <label>Exam Subject</label><input type="text" id="name" placeholder="FAR, AUD, etc.">
-        <label>Exam Date</label><input type="date" id="date">
-        <label>Goal (Total MCQ/Pages)</label><input type="number" id="total" value="100">
-        <label>Current Progress</label><input type="number" id="current" value="0">
-        <button onclick="save()">Save Settings</button>
+    <div class="add-zone">
+        <select id="preset-select">
+            <option value="Past Exam">Past Exam (Sets)</option>
+            <option value="MCQ Problems">MCQ (Questions)</option>
+            <option value="Textbook">Textbook (Pages)</option>
+            <option value="Mock Score">Mock Score (%)</option>
+            <option value="Custom">Custom Task</option>
+        </select>
+        <button class="btn-primary" onclick="addNewTask()">+ Add</button>
+    </div>
+
+    <div class="config-box">
+        <label style="display:block; margin-bottom:5px;">Exam Settings</label>
+        <input type="text" id="subject-input" placeholder="Subject Name" style="width:100%; margin-bottom:10px; border:none; padding:8px; border-radius:5px;">
+        <input type="date" id="date-input" style="width:100%; border:none; padding:8px; border-radius:5px;">
+        <button class="btn" style="width:100%; margin-top:10px; background:#2d3436; color:white; border:none;" onclick="saveConfig()">Save Settings</button>
     </div>
 </div>
 
 <script>
-    function save() {
-        const data = {
-            name: document.getElementById('name').value,
-            date: document.getElementById('date').value,
-            total: document.getElementById('total').value,
-            current: document.getElementById('current').value
-        };
-        localStorage.setItem('study_data', JSON.stringify(data));
+    let studyData = {
+        subject: "Boki Level 2",
+        date: "2026-01-09",
+        tasks: []
+    };
+
+    // 初期読み込み
+    window.onload = () => {
+        const saved = localStorage.getItem('achan_tracker_v2');
+        if (saved) {
+            studyData = JSON.parse(saved);
+            document.getElementById('subject-input').value = studyData.subject;
+            document.getElementById('date-input').value = studyData.date;
+        }
         render();
-        toggleSettings();
+    };
+
+    function addNewTask() {
+        const type = document.getElementById('preset-select').value;
+        const goal = (type === 'Mock Score') ? 100 : 10;
+        studyData.tasks.push({ name: type, current: 0, goal: goal, type: type });
+        saveAndRender();
+    }
+
+    function updateVal(index, amount) {
+        studyData.tasks[index].current = Math.max(0, studyData.tasks[index].current + amount);
+        saveAndRender();
+    }
+
+    function manualInput(index, field, val) {
+        studyData.tasks[index][field] = (field === 'name') ? val : parseInt(val) || 0;
+        saveAndRender();
+    }
+
+    function deleteTask(index) {
+        if(confirm('Delete this task?')) {
+            studyData.tasks.splice(index, 1);
+            saveAndRender();
+        }
+    }
+
+    function saveConfig() {
+        studyData.subject = document.getElementById('subject-input').value;
+        studyData.date = document.getElementById('date-input').value;
+        saveAndRender();
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('achan_tracker_v2', JSON.stringify(studyData));
+        render();
     }
 
     function render() {
-        const saved = localStorage.getItem('study_data');
-        if (!saved) return;
-        const data = JSON.parse(saved);
+        // カウントダウン計算
+        document.getElementById('exam-title').innerText = studyData.subject || "Exam Goal";
+        const diff = Math.ceil((new Date(studyData.date) - new Date()) / (1000*60*60*24));
+        document.getElementById('days-count').innerText = Math.max(0, diff);
 
-        document.getElementById('title-display').textContent = data.name + " GOAL";
-        const diff = new Date(data.date) - new Date();
-        document.getElementById('days-count').textContent = Math.max(0, Math.ceil(diff / (1000*60*60*24)));
-        
-        const percent = Math.min(100, Math.round((data.current / data.total) * 100));
-        document.getElementById('bar').style.width = percent + "%";
-        document.getElementById('percent-text').textContent = percent + "%";
-        document.getElementById('progress-text').textContent = `Progress: ${data.current} / ${data.total}`;
-    }
+        const area = document.getElementById('tasks-area');
+        area.innerHTML = '';
 
-    function toggleSettings() {
-        const s = document.getElementById('settings');
-        s.style.display = s.style.display === 'block' ? 'none' : 'block';
+        let totalCur = 0;
+        let totalGoal = 0;
+
+        studyData.tasks.forEach((task, i) => {
+            totalCur += task.current;
+            totalGoal += task.goal;
+
+            const progress = Math.round((task.current / task.goal) * 100) || 0;
+            
+            const div = document.createElement('div');
+            div.className = 'task-card';
+            div.innerHTML = `
+                <div class="task-header">
+                    <input class="task-title" value="${task.name}" onchange="manualInput(${i}, 'name', this.value)">
+                    <button class="delete-btn" onclick="deleteTask(${i})">✕</button>
+                </div>
+                <div class="controls">
+                    <button class="counter-btn" onclick="updateVal(${i}, -1)">-1</button>
+                    <input class="num-input" type="number" value="${task.current}" onchange="manualInput(${i}, 'current', this.value)">
+                    <span style="opacity:0.3;">/</span>
+                    <input class="num-input" type="number" value="${task.goal}" onchange="manualInput(${i}, 'goal', this.value)">
+                    <button class="counter-btn" onclick="updateVal(${i}, 1)">+1</button>
+                    <button class="counter-btn" onclick="updateVal(${i}, 10)">+10</button>
+                    <span style="margin-left:auto; font-weight:bold; color:var(--accent);">${progress}%</span>
+                </div>
+            `;
+            area.appendChild(div);
+        });
+
+        const totalPercent = totalGoal > 0 ? Math.round((totalCur / totalGoal) * 100) : 0;
+        document.getElementById('total-fill').style.width = totalPercent + '%';
+        document.getElementById('total-percent').innerText = totalPercent + '%';
     }
-    window.onload = render;
 </script>
+
 </body>
 </html>
