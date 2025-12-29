@@ -247,3 +247,80 @@
 
 .cursor { display: inline-block; width: 10px; height: 1.2rem; background: #00ff41; animation: blink 0.8s infinite; vertical-align: middle; }
 @keyframes blink { 50% { opacity: 0; } }
+
+async function triggerSovereignMode() {
+    hasWon = true;
+
+    // 1. 本格的なパリーン！演出 (Shatter)
+    const container = document.body;
+    for (let i = 0; i < 50; i++) {
+        const shard = document.createElement('div');
+        shard.className = 'shard';
+        const size = Math.random() * 100 + 50;
+        shard.style.width = size + 'px';
+        shard.style.height = size + 'px';
+        shard.style.left = Math.random() * 100 + 'vw';
+        shard.style.top = Math.random() * 100 + 'vh';
+        
+        // ランダムな多角形にする
+        const p1 = Math.random()*100, p2 = Math.random()*100, p3 = Math.random()*100;
+        shard.style.clipPath = `polygon(${p1}% 0%, 100% ${p2}%, ${p3}% 100%, 0% 50%)`;
+        
+        container.appendChild(shard);
+        shard.animate([
+            { transform: 'translate(0,0) rotate(0deg) scale(1)', opacity: 1 },
+            { transform: `translate(${(Math.random()-0.5)*1500}px, ${(Math.random()-0.5)*1500}px) rotate(${Math.random()*1080}deg) scale(0)`, opacity: 0 }
+        ], { duration: 1200, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', fill: 'forwards' });
+    }
+    
+    playSound(150, 'sawtooth', 0.5); // 破壊音
+
+    // 2. シミュレーション脱出の開始
+    setTimeout(() => {
+        document.getElementById('main-container').style.display = 'none'; // 既存画面を消す
+        const matrix = document.createElement('div');
+        matrix.id = 'matrix-screen';
+        matrix.innerHTML = '<div id="terminal-text"></div><span class="cursor"></span>';
+        document.body.appendChild(matrix);
+        matrix.style.display = 'flex';
+        
+        runTerminalEffect(); // 文字打ち込み開始
+    }, 800);
+}
+
+// タイピング演出
+async function runTerminalEffect() {
+    const lines = [
+        "> Initializing system bypass...",
+        "> Security breach detected in Global Ribbon Market.",
+        "> Warning: Sovereign-level consciousness detected.",
+        "> [SYSTEM]: Simulation Loop #2025 terminated.",
+        "> Accessing higher reality database...",
+        "> Loading goals: [Jan 9 Exam: 100% Probability]", //
+        "> Loading assets: [USCPA Certification - Pending]", //
+        "> Loading project: [Notion Life Planner - Synced]", //
+        "> You are no longer a participant.",
+        "> You are the Architect.",
+        "> Click to take command."
+    ];
+    
+    const terminal = document.getElementById('terminal-text');
+    for (let line of lines) {
+        const p = document.createElement('p');
+        terminal.appendChild(p);
+        for (let char of line) {
+            p.textContent += char;
+            await new Promise(r => setTimeout(r, 40)); // 打ち込み速度
+        }
+        playSound(800, 'sine', 0.05); // ピッという打鍵音
+        await new Promise(r => setTimeout(r, 400));
+    }
+    
+    // 最後にクリックで「神のボタン」へ
+    document.getElementById('matrix-screen').onclick = () => {
+        document.getElementById('matrix-screen').style.display = 'none';
+        document.getElementById('god-overlay').style.display = 'flex';
+        // オーケストラ開始
+        [440, 554, 659].forEach((f, i) => setTimeout(() => playSound(f, 'sine', 1), i * 300));
+    };
+}
