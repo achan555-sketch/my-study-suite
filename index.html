@@ -3,77 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 achan's Royal Suite v6 🎀</title>
+    <title>🎀 achan's Progress Dashboard v7 🎀</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap');
-        :root { --pink-light: #ffe5ec; --pink-main: #ff8fab; --pink-dark: #fb6f92; --bg: #fff0f3; --card: #ffffff; --text: #5c4d50; }
+        :root { --pink-light: #ffe5ec; --pink-main: #ff8fab; --pink-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; }
         body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; background-image: radial-gradient(var(--pink-light) 1px, transparent 1px); background-size: 20px 20px; }
         .wrapper { width: 100%; max-width: 500px; }
         header { text-align: center; margin-bottom: 30px; }
-        h1 { font-weight: 700; letter-spacing: 2px; font-size: 1.6rem; color: var(--pink-dark); margin: 0; }
+        h1 { font-weight: 700; color: var(--pink-dark); margin: 0; letter-spacing: 2px; }
         .ribbon-icon { font-size: 2.2rem; display: block; animation: float 3s ease-in-out infinite; }
         @keyframes float { 50% { transform: translateY(-8px); } }
 
-        .exam-card { background: var(--card); border-radius: 35px; padding: 25px; box-shadow: 0 15px 35px rgba(255, 143, 171, 0.15); margin-bottom: 30px; border: 3px solid var(--pink-light); position: relative; }
-        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .exam-title { font-size: 1.3rem; font-weight: 700; color: var(--pink-dark); }
+        .exam-card { background: white; border-radius: 35px; padding: 25px; box-shadow: 0 15px 35px rgba(255, 143, 171, 0.15); margin-bottom: 30px; border: 3px solid var(--pink-light); }
+        .exam-header { display: flex; justify-content: space-between; align-items: center; }
         .countdown { font-size: 0.75rem; background: var(--pink-light); color: var(--pink-dark); padding: 6px 15px; border-radius: 20px; font-weight: bold; }
-        .reward-tag { font-size: 0.85rem; background: #fffcfd; padding: 10px; border-radius: 15px; margin-bottom: 20px; display: block; color: var(--pink-dark); border: 1px dashed var(--pink-main); text-align: center; font-weight: 700; }
-
-        .overall-section { margin-bottom: 25px; padding: 15px; background: #fffcfd; border-radius: 25px; border: 1px solid var(--pink-light); }
-        .bar-outer { background: var(--pink-light); height: 16px; border-radius: 10px; overflow: hidden; margin-top: 8px; }
-        .bar-inner { background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); height: 100%; width: 0%; transition: 1s ease; }
+        
+        .overall-section { background: #fffcfd; padding: 20px; border-radius: 25px; border: 1px solid var(--pink-light); margin: 15px 0; }
+        .bar-outer { background: var(--pink-light); height: 16px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .bar-inner { background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); height: 100%; width: 0%; transition: 1.2s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
 
         .task-item { margin-top: 25px; padding: 20px; background: white; border-radius: 25px; border: 2px solid var(--pink-light); position: relative; }
         .percent-badge { position: absolute; top: -12px; right: 20px; background: var(--pink-dark); color: white; padding: 4px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+
+        /* Daily Input Area */
+        .daily-log-zone { background: #fffcfd; border-radius: 15px; padding: 12px; margin-top: 15px; border: 1px dashed var(--pink-main); }
+        .log-title { font-size: 0.7rem; font-weight: 700; color: var(--pink-main); text-transform: uppercase; display: block; margin-bottom: 8px; }
+        .log-input-row { display: flex; gap: 8px; align-items: center; }
         
-        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 30px; cursor: pointer; }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 10px; background: var(--pink-light); border-radius: 10px; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 26px; width: 26px; border-radius: 50%; background: var(--pink-dark); border: 3px solid white; margin-top: -8px; }
-
-        .input-group { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; }
-        .num-input { width: 55px; padding: 5px; border: 2px solid var(--pink-light); border-radius: 10px; text-align: center; font-family: 'Quicksand'; font-weight: 700; color: var(--pink-dark); }
-
+        .input-mini { width: 70px; padding: 8px; border: 2px solid var(--pink-light); border-radius: 10px; text-align: center; font-family: 'Quicksand'; font-weight: 700; color: var(--pink-dark); outline: none; }
+        .btn-add-log { background: var(--pink-main); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+        
+        .progress-detail { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
+        
+        /* Modal-like styles for adding new mission */
         .add-zone, .reward-manager { background: white; padding: 25px; border-radius: 35px; border: 3px solid var(--pink-light); margin-top: 30px; }
-        label { font-size: 0.8rem; font-weight: 700; color: var(--pink-dark); margin: 10px 0 5px 5px; display: block; }
-        input[type="text"], select, .date-input { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--pink-light); margin-bottom: 10px; box-sizing: border-box; font-family: 'Quicksand'; outline: none; }
-        .btn-main { background: var(--pink-dark); color: white; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; border: none; cursor: pointer; box-shadow: 0 5px 15px rgba(251, 111, 146, 0.3); }
-
-        .pool-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-        .pool-item { background: var(--pink-light); color: var(--pink-dark); padding: 5px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-        .del-pool { cursor: pointer; color: var(--pink-dark); opacity: 0.5; }
+        input[type="text"], .date-input, select { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--pink-light); margin-bottom: 10px; box-sizing: border-box; font-family: 'Quicksand'; outline: none; }
+        .btn-main { background: var(--pink-dark); color: white; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <header><span class="ribbon-icon">🎀</span><h1>Study Suite v6</h1></header>
+    <header><span class="ribbon-icon">🎀</span><h1>chan Dashboard</h1></header>
 
     <div id="dashboard"></div>
 
     <div class="add-zone">
         <h3 style="text-align:center; color:var(--pink-dark); margin:0 0 15px;">✨ New Mission ✨</h3>
-        <label>Subject</label>
-        <input type="text" id="new-name" placeholder="e.g. Boki Level 2">
-        <label>Deadline</label>
-        <input type="text" id="new-date" class="date-input" placeholder="Select Date">
-        <label>Choose Reward 🎁</label>
-        <select id="reward-select" onchange="toggleCustomReward()">
-            <option value="">-- Select from My List --</option>
-            <option value="CUSTOM">Add Custom Reward...</option>
+        <input type="text" id="new-name" placeholder="Subject Name">
+        <input type="text" id="new-date" class="date-input" placeholder="Deadline">
+        <select id="reward-select">
+            <option value="">-- Choose Reward 🎁 --</option>
         </select>
-        <input type="text" id="custom-reward-input" style="display:none;" placeholder="Type custom reward here...">
-        <button class="btn-main" onclick="addProject()">Create Goal 🎀</button>
+        <button class="btn-main" onclick="addProject()">Launch Goal 🎀</button>
     </div>
 
     <div class="reward-manager">
-        <h3 style="color:var(--pink-dark); margin:0 0 10px; font-size:1rem;">🎨 Reward List (Pool)</h3>
+        <h3 style="color:var(--pink-dark); margin:0 0 10px; font-size:1rem;">🎨 My Reward Pool</h3>
         <div style="display:flex; gap:10px;">
-            <input type="text" id="pool-input" placeholder="New reward idea..." style="margin:0;">
+            <input type="text" id="pool-input" placeholder="New reward..." style="margin:0;">
             <button class="btn-main" style="width:80px; padding:10px;" onclick="addToPool()">Add</button>
         </div>
-        <div id="pool-display" class="pool-list"></div>
+        <div id="pool-display" style="display:flex; flex-wrap:wrap; gap:5px; margin-top:10px;"></div>
     </div>
 </div>
 
@@ -83,12 +75,12 @@
 <script>
     flatpickr(".date-input", { dateFormat: "Y-m-d", minDate: "today", disableMobile: true });
 
-    let projects = JSON.parse(localStorage.getItem('achan_royal_v6')) || [];
-    let rewardPool = JSON.parse(localStorage.getItem('achan_reward_pool')) || ["New Lip Tint 💄", "Fancy Cake 🍰", "Shopping Trip 🛍️"];
+    let projects = JSON.parse(localStorage.getItem('achan_v7_data')) || [];
+    let rewardPool = JSON.parse(localStorage.getItem('achan_v7_pool')) || ["New Lip Tint 💄", "Fancy Cake 🍰"];
 
     function save() {
-        localStorage.setItem('achan_royal_v6', JSON.stringify(projects));
-        localStorage.setItem('achan_reward_pool', JSON.stringify(rewardPool));
+        localStorage.setItem('achan_v7_data', JSON.stringify(projects));
+        localStorage.setItem('achan_v7_pool', JSON.stringify(rewardPool));
         render();
         updatePoolUI();
     }
@@ -100,44 +92,51 @@
 
     function removePoolItem(idx) { rewardPool.splice(idx, 1); save(); }
 
-    function toggleCustomReward() {
-        const sel = document.getElementById('reward-select').value;
-        document.getElementById('custom-reward-input').style.display = (sel === 'CUSTOM') ? 'block' : 'none';
-    }
-
     function updatePoolUI() {
         const display = document.getElementById('pool-display');
         const select = document.getElementById('reward-select');
         display.innerHTML = '';
-        
-        // Dropdown update
-        let options = '<option value="">-- Select from My List --</option>';
+        let options = '<option value="">-- Choose Reward 🎁 --</option>';
         rewardPool.forEach((r, i) => {
             options += `<option value="${r}">${r}</option>`;
-            display.innerHTML += `<div class="pool-item">${r} <span class="del-pool" onclick="removePoolItem(${i})">✕</span></div>`;
+            display.innerHTML += `<div style="background:var(--pink-light); color:var(--pink-dark); padding:5px 12px; border-radius:10px; font-size:0.75rem; font-weight:700;">${r} <span onclick="removePoolItem(${i})" style="cursor:pointer; opacity:0.5;">✕</span></div>`;
         });
-        options += '<option value="CUSTOM">Add Custom Reward...</option>';
         select.innerHTML = options;
     }
 
     function addProject() {
         const name = document.getElementById('new-name').value;
         const date = document.getElementById('new-date').value;
-        let reward = document.getElementById('reward-select').value;
-        if (reward === 'CUSTOM') reward = document.getElementById('custom-reward-input').value;
-        if (!name || !date || !reward) return alert("Fill in everything! 🌸");
-
-        projects.push({ id: Date.now(), name, date, reward, tasks: [{ id: 1, name: "MCQ", current: 0, goal: 100 }, { id: 2, name: "Chapters", current: 0, goal: 10 }] });
+        const reward = document.getElementById('reward-select').value;
+        if (!name || !date || !reward) return alert("Fill in everything! 🎀");
+        projects.push({ id: Date.now(), name, date, reward, tasks: [{ id: 1, name: "Practice Questions", current: 0, goal: 100 }, { id: 2, name: "Study Chapters", current: 0, goal: 10 }] });
         save();
         document.getElementById('new-name').value = '';
     }
 
-    function updateValue(pId, tId, f, v) {
+    // --- ここが「毎日やったこと」の追加ロジック ---
+    function logDaily(pId, tId) {
+        const input = document.getElementById(`log-${pId}-${tId}`);
+        const val = parseInt(input.value) || 0;
+        if (val <= 0) return;
+
         const p = projects.find(x => x.id === pId);
         const t = p.tasks.find(x => x.id === tId);
-        const old = Math.round((t.current / t.goal) * 100);
-        t[f] = Math.max(0, parseInt(v) || 0);
-        if (Math.round((t.current / t.goal) * 100) === 100 && old < 100) confetti({ particleCount: 150, spread: 70, colors: ['#ff8fab', '#fb6f92'] });
+        const oldP = Math.round((t.current / t.goal) * 100);
+        
+        t.current = Math.min(t.goal, t.current + val);
+        input.value = '';
+
+        if (Math.round((t.current / t.goal) * 100) === 100 && oldP < 100) {
+            confetti({ particleCount: 200, spread: 80, colors: ['#ff8fab', '#fb6f92', '#ffffff'] });
+        }
+        save();
+    }
+
+    function updateGoal(pId, tId, val) {
+        const p = projects.find(x => x.id === pId);
+        const t = p.tasks.find(x => x.id === tId);
+        t.goal = Math.max(1, parseInt(val) || 1);
         save();
     }
 
@@ -150,23 +149,35 @@
             let tHtml = '', tCur = 0, tGoal = 0;
             proj.tasks.forEach(task => {
                 tCur += task.current; tGoal += task.goal;
-                const p = Math.round((task.current/task.goal)*100)||0;
-                tHtml += `<div class="task-item"><span class="percent-badge">${p}%</span>
-                    <div style="font-weight:700; margin-bottom:10px;">${task.name} 🎀</div>
-                    <input type="range" min="0" max="${task.goal}" value="${task.current}" oninput="updateValue(${proj.id},${task.id},'current',this.value)">
-                    <div class="input-group">
-                        <input type="number" class="num-input" value="${task.current}" onchange="updateValue(${proj.id},${task.id},'current',this.value)">
-                        <span class="slash">/</span>
-                        <input type="number" class="num-input" value="${task.goal}" onchange="updateValue(${proj.id},${task.id},'goal',this.value)">
-                    </div></div>`;
+                const p = Math.round((task.current / task.goal) * 100) || 0;
+                tHtml += `
+                <div class="task-item">
+                    <span class="percent-badge">${p}% Done</span>
+                    <div class="progress-detail">
+                        <span>${task.name} 🎀</span>
+                        <span>${task.current} / <input type="number" class="input-mini" value="${task.goal}" onchange="updateGoal(${proj.id}, ${task.id}, this.value)"></span>
+                    </div>
+                    <div class="daily-log-zone">
+                        <span class="log-title">Log Today's Progress</span>
+                        <div class="log-input-row">
+                            <input type="number" id="log-${proj.id}-${task.id}" class="input-mini" placeholder="+0">
+                            <button class="btn-add-log" onclick="logDaily(${proj.id}, ${task.id})">Add to Total</button>
+                        </div>
+                    </div>
+                </div>`;
             });
-            const overP = tGoal > 0 ? Math.round((tCur/tGoal)*100) : 0;
-            dash.innerHTML += `<div class="exam-card">
-                <div class="exam-header"><div class="exam-title">${proj.name}</div><span class="countdown">✨ ${days} Days ✨</span></div>
-                <div class="reward-tag">🎁 Reward: ${proj.reward}</div>
-                <div class="overall-section"><div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;"><span>Overall</span><span>${overP}%</span></div>
-                <div class="bar-outer"><div class="bar-inner" style="width:${overP}%"></div></div></div>
-                ${tHtml}<button class="btn-main" style="width:auto; padding:5px 15px; margin-top:15px; font-size:0.7rem;" onclick="deleteProject(${proj.id})">remove</button></div>`;
+            const overP = tGoal > 0 ? Math.round((tCur / tGoal) * 100) : 0;
+            dash.innerHTML += `
+            <div class="exam-card">
+                <div class="exam-header"><div style="font-weight:700; font-size:1.3rem; color:var(--pink-dark);">${proj.name}</div><span class="countdown">✨ ${days} Days left</span></div>
+                <div style="font-size:0.8rem; color:var(--pink-main); margin-top:5px; text-align:center;">🎁 Reward: ${proj.reward}</div>
+                <div class="overall-section">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; color:var(--pink-dark);"><span>Overall Progress</span><span>${overP}%</span></div>
+                    <div class="bar-outer"><div class="bar-inner" style="width:${overP}%"></div></div>
+                </div>
+                ${tHtml}
+                <button class="remove-btn" style="background:none; border:none; color:#ccc; text-decoration:underline; font-size:0.7rem; margin-top:20px; width:100%; cursor:pointer;" onclick="deleteProject(${proj.id})">remove goal</button>
+            </div>`;
         });
     }
 
