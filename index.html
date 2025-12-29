@@ -3,58 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 GRX Pro: World Championship v18 🎀</title>
+    <title>🎀 GRX Pro: Real-Timeframe v20 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { 
             --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0d0d0d; --card: #1a1a1a;
             --up: #ff3131; --down: #00e676; --text: #ffffff;
+            --gold: #ffd700;
         }
         
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); }
         
-        /* Start Screen */
-        #start-overlay { position: fixed; inset: 0; background: #fff0f3; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #5c4d50; }
+        /* Start & Victory Overlays */
+        #start-overlay, #victory-overlay { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #start-overlay { background: #fff0f3; color: #5c4d50; }
+        #victory-overlay { background: rgba(0,0,0,0.85); display: none; }
         .input-name { padding: 15px; border-radius: 15px; border: 3px solid var(--p-light); width: 300px; font-size: 1.3rem; text-align: center; margin-bottom: 20px; outline: none; }
         .start-btn { background: var(--p-dark); color: white; border: none; padding: 12px 50px; border-radius: 15px; cursor: pointer; font-weight: 700; font-size: 1.3rem; }
+        .victory-card { background: linear-gradient(135deg, #fff, #fff0f3); color: #333; padding: 40px; border-radius: 30px; text-align: center; border: 4px solid var(--gold); box-shadow: 0 0 60px var(--gold); }
 
-        /* Main Grid */
+        /* Main Layout */
         .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; }
-        
-        /* LEFT: Square Charts */
         .left-panel { flex: 0 0 50%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
-        .chart-box { background: #000; border-radius: 12px; padding: 8px; border: 1px solid #333; position: relative; aspect-ratio: 1 / 1; display: flex; flex-direction: column; }
-        .chart-label { color: #666; font-size: 0.6rem; font-weight: bold; position: absolute; top: 8px; left: 10px; z-index: 5; }
+        .chart-box { background: #000; border-radius: 12px; padding: 8px; border: 1px solid #333; position: relative; aspect-ratio: 1/1; }
+        .chart-label { color: #888; font-size: 0.6rem; font-weight: bold; position: absolute; top: 8px; left: 10px; z-index: 5; }
         canvas { width: 100%; height: 100%; }
 
-        /* RIGHT: Control Panel */
-        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; height: 100%; overflow: hidden; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
         .card { background: var(--card); border-radius: 15px; padding: 10px; border: 1px solid #333; }
         
-        .stats-card { display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--p-main); flex-shrink: 0; }
+        .stats-card { display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--p-main); }
         .total-asset { font-size: 1.4rem; font-weight: 700; color: var(--p-main); font-family: 'Roboto Mono'; }
 
-        /* SCROLLABLE BOARD */
         .board-card { background: #000; font-family: 'Roboto Mono'; flex-grow: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden; border: 2px solid #222; border-radius: 15px; }
-        .board-header { display: flex; justify-content: space-between; color: #444; font-size: 0.65rem; padding: 8px 15px; border-bottom: 1px solid #222; }
-        .scroll-area { flex-grow: 1; overflow-y: auto; padding: 0 10px; scrollbar-width: thin; scrollbar-color: #333 #000; }
+        .scroll-area { flex-grow: 1; overflow-y: auto; padding: 0 10px; scrollbar-width: none; }
         .board-row { display: flex; justify-content: space-between; height: 18px; align-items: center; font-size: 0.8rem; }
         .ask-price { color: var(--up); font-weight: bold; }
         .bid-price { color: var(--down); font-weight: bold; }
-        
-        .mid-price-line { background: #1a1a1a; text-align: center; padding: 5px; border-top: 1px solid #333; border-bottom: 1px solid #333; margin: 4px 0; font-weight: bold; color: white; font-size: 1.1rem; }
+        .mid-price-line { background: #1a1a1a; text-align: center; padding: 5px; border-top: 1px solid #333; border-bottom: 1px solid #333; margin: 4px 0; font-weight: bold; font-size: 1.1rem; }
 
-        /* Trade Controls */
-        .trade-card { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex-shrink: 0; }
+        .trade-card { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .btn { border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; color: white; font-family: 'Quicksand'; font-size: 0.85rem; }
         .btn-buy { background: var(--up); }
         .btn-sell { background: var(--down); }
-        .btn-max { background: #333; color: #999; grid-column: span 1; padding: 5px; font-size: 0.65rem; }
 
-        /* SCROLLABLE RANKING */
-        .ranking-card { font-size: 0.75rem; background: #0a0a0a; border-radius: 15px; height: 150px; display: flex; flex-direction: column; flex-shrink: 0; }
-        .rank-header { font-weight: 700; color: var(--p-main); padding: 8px 12px; border-bottom: 1px solid #222; }
-        .rank-list-scroll { overflow-y: auto; flex-grow: 1; scrollbar-width: thin; }
+        .ranking-card { font-size: 0.75rem; background: #0a0a0a; border-radius: 15px; height: 140px; overflow-y: auto; flex-shrink: 0; }
         .rank-row { display: flex; justify-content: space-between; padding: 4px 12px; border-bottom: 1px solid #111; }
         .rank-row.me { color: var(--p-main); font-weight: bold; background: rgba(255, 143, 171, 0.1); }
     </style>
@@ -62,115 +55,136 @@
 <body>
 
 <div id="start-overlay">
-    <span style="font-size:3rem;">👑</span>
+    <span style="font-size:3rem;">🎀</span>
     <h1>GLOBAL RIBBON EXCHANGE</h1>
-    <input type="text" id="user-name-input" class="input-name" placeholder="Enter Trader Name" maxlength="10">
-    <button class="start-btn" onclick="startGame()">ENTER WORLD CHAMPIONSHIP 🚀</button>
+    <input type="text" id="user-name-input" class="input-name" placeholder="Trader Name" maxlength="10">
+    <button class="start-btn" onclick="startGame()">ENTER MARKET 🚀</button>
+</div>
+
+<div id="victory-overlay" onclick="this.style.display='none'">
+    <div class="victory-card">
+        <h1 style="color:var(--p-dark); margin:0;">👑 WORLD NO.1 👑</h1>
+        <p style="font-size:1.2rem; font-weight:bold;">Mars Traveler Surrendered!</p>
+        <p><span id="winner-name"></span> is the new Legend.</p>
+        <button class="start-btn" style="margin-top:20px; font-size:1rem;">CONTINUE TRADING</button>
+    </div>
 </div>
 
 <div class="main-container">
     <div class="left-panel">
-        <div class="chart-box"><span class="chart-label">5M (NOW)</span><canvas id="chart5m"></canvas></div>
-        <div class="chart-box"><span class="chart-label">1H (SHORT)</span><canvas id="chart1h"></canvas></div>
-        <div class="chart-box"><span class="chart-label">DAILY (MID)</span><canvas id="chartDaily"></canvas></div>
-        <div class="chart-box"><span class="chart-label">WEEKLY (LONG)</span><canvas id="chartWeekly"></canvas></div>
+        <div class="chart-box"><span class="chart-label">1M (NOW)</span><canvas id="chart1m"></canvas></div>
+        <div class="chart-box"><span class="chart-label">5M (SHORT)</span><canvas id="chart5m"></canvas></div>
+        <div class="chart-box"><span class="chart-label">DAILY (STATIC)</span><canvas id="chartDaily"></canvas></div>
+        <div class="chart-box"><span class="chart-label">WEEKLY (STATIC)</span><canvas id="chartWeekly"></canvas></div>
     </div>
 
     <div class="right-panel">
         <div class="card stats-card">
-            <div>
-                <div id="player-name" style="font-size:0.6rem; font-weight:700; opacity:0.6;">TRADER: achan</div>
-                <div class="total-asset"><span id="total-val">100,000.0</span> <small style="font-size:0.6rem;">GRB</small></div>
-            </div>
-            <div id="rank-display" style="font-size: 0.7rem; font-weight: bold; color: gold;">#?? WORLD</div>
+            <div><div id="player-name" style="font-size:0.6rem; opacity:0.6;">TRADER: achan</div><div class="total-asset"><span id="total-val">100,000.0</span> <small style="font-size:0.6rem;">GRB</small></div></div>
+            <div id="rank-display" style="font-size: 0.75rem; font-weight: bold; color: gold;">#?? WORLD</div>
         </div>
 
         <div class="card board-card">
-            <div class="board-header"><span>PRICE (GRB)</span><span>ORDER QTY</span></div>
             <div class="scroll-area">
-                <div id="ask-rows"></div>
-                <div class="mid-price-line" id="mid-val-display">100.0</div>
-                <div id="bid-rows"></div>
+                <div id="ask-rows"></div><div class="mid-price-line" id="mid-val-display">100.0</div><div id="bid-rows"></div>
             </div>
         </div>
 
         <div class="card trade-card">
             <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1</button>
             <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1</button>
-            <button class="btn btn-max" onclick="trade('buy','max')" style="background:var(--up); opacity:0.8;">BUY ALL IN</button>
-            <button class="btn btn-max" id="smax" onclick="trade('sell','max')" style="background:var(--down); opacity:0.8;">SELL ALL EXIT</button>
-            <div style="grid-column: span 2; font-size:0.65rem; display:flex; justify-content:space-between; font-family:'Roboto Mono'; opacity:0.6;">
-                <span>CASH: <span id="cash-val">100.0k</span></span>
-                <span>HOLD: <span id="hold-val">0</span></span>
+            <button class="btn btn-buy" style="opacity:0.8" onclick="trade('buy','max')">ALL IN</button>
+            <button class="btn btn-sell" id="smax" style="opacity:0.8" onclick="trade('sell','max')">EXIT ALL</button>
+            <div style="grid-column: span 2; font-size:0.65rem; display:flex; justify-content:space-between; opacity:0.6; font-family:'Roboto Mono';">
+                <span>CASH: <span id="cash-val">100.0k</span></span><span>HOLD: <span id="hold-val">0</span></span>
             </div>
         </div>
 
         <div class="card ranking-card">
-            <div class="rank-header">🌍 WORLD RANKING TOP 30</div>
-            <div class="rank-list-scroll" id="ranking-list"></div>
+            <div style="padding:8px 12px; color:var(--p-main); font-weight:700; font-size:0.7rem; border-bottom:1px solid #222;">🌍 WORLD PARODY RANKING</div>
+            <div id="ranking-list"></div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    let userName = "achan";
-    let price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
-    let user = { cash: 100000.0, hold: 0 };
-    let data5m = [], data1h = [], dataDaily = [], dataWeekly = [];
-    let currentCandle = { o: price, h: price, l: price, c: price, ticks: 0 };
+    let userName = "achan", price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
+    let user = { cash: 100000.0, hold: 0 }, hasWon = false;
+    
+    // Data Arrays
+    let data1m = [], data5m = [], dataDaily = [], dataWeekly = [];
+    
+    // Simulation Counters & Temp Candles
+    let tickCount = 0;
+    let candle1m = { o:price, h:price, l:price, c:price };
+    let candle5m = { o:price, h:price, l:price, c:price };
 
-    // Ranking pre-generation
     const worldTraders = [
-        {n: "Elon Musk 🚀", a: 21000000}, {n: "Warren Buffett 📈", a: 15000000}, {n: "Jeff Bezos 📦", a: 12000000},
-        {n: "Jensen Huang 🤖", a: 8000000}, {n: "Bernard Arnault 👜", a: 7500000}, {n: "Mark Zuckerberg 👥", a: 6000000},
-        {n: "Bill Gates 💻", a: 5000000}, {n: "Larry Page 🔍", a: 4500000}, {n: "Larry Ellison 💾", a: 4000000},
-        {n: "Steve Ballmer 🏀", a: 3500000}, {n: "Sergey Brin 🌐", a: 3000000}, {n: "Michael Bloomberg 📺", a: 2500000},
-        {n: "Carlos Slim 📞", a: 2000000}, {n: "Mukesh Ambani 🏗️", a: 1800000}, {n: "Amancio Ortega 👕", a: 1600000},
-        {n: "Françoise Meyers 💄", a: 1400000}, {n: "Jim Walton 🏪", a: 1200000}, {n: "Rob Walton 🛒", a: 1100000},
-        {n: "Alice Walton 🎨", a: 1000000}, {n: "Gautam Adani ⚡", a: 950000}, {n: "Zhang Yiming 🎵", a: 800000},
-        {n: "Li Ka-shing ⚓", a: 750000}, {n: "Masayoshi Son 🦅", a: 600000}, {n: "Tadashi Yanai 🧣", a: 500000},
-        {n: "Crypto King 💎", a: 400000}, {n: "WallStreetBets 🦍", a: 300000}, {n: "Daytrade Cat 🐱", a: 200000},
-        {n: "Beginner Bot 🤖", a: 150000}, {n: "Paper Hands 📄", a: 80000}
+        {n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
+        {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000},
+        {n: "Ribbon Oracle 🔮", a: 4000000}, {n: "Giraffe Queen 🦒", a: 3500000}, {n: "Toppan Elite 🏢", a: 2500000},
+        {n: "USCPA Fighter 🇺🇸", a: 1800000}, {n: "Daytrade Cat 🐱", a: 950000}, {n: "Whale Watching 🐳", a: 800000},
+        {n: "Diamond Hands 💎", a: 600000}, {n: "Coffee Addict ☕", a: 400000}, {n: "Smart AI 🦾", a: 150000}
     ];
+
+    function preGenerateData() {
+        let p = price;
+        for(let i=0; i<40; i++) {
+            p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*3));
+            let c = {o:p, h:p+0.5, l:p-0.5, c:p};
+            // Fill all initially to look populated
+            data1m.push(c); if(i%5===0) data5m.push(c); if(i%20===0) dataDaily.push(c); if(i%40===0) dataWeekly.push(c);
+        }
+        price = p;
+        candle1m = { o:price, h:price, l:price, c:price };
+        candle5m = { o:price, h:price, l:price, c:price };
+    }
 
     function startGame() {
         userName = document.getElementById('user-name-input').value || "Trader";
         document.getElementById('player-name').innerText = `TRADER: ${userName}`;
         document.getElementById('start-overlay').style.display = 'none';
-        for(let i=0; i<60; i++) {
-            price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*2));
-            let c = {o:price, h:price+0.5, l:price-0.5, c:price};
-            data5m.push(c); if(i%3===0) data1h.push(c); if(i%9===0) dataDaily.push(c); if(i%18===0) dataWeekly.push(c);
-        }
-        setInterval(updateMarket, 600);
+        preGenerateData();
+        setInterval(updateMarket, 600); // 600ms per tick
     }
 
     function updateMarket() {
         lastPrice = price;
         price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*3));
-        currentCandle.h = Math.max(currentCandle.h, price);
-        currentCandle.l = Math.min(currentCandle.l, price);
-        currentCandle.c = price;
-        currentCandle.ticks++;
-        if (currentCandle.ticks >= 4) {
-            data5m.push({...currentCandle}); if(data5m.length>30) data5m.shift();
-            if(data5m.length%3===0) { data1h.push({...currentCandle}); if(data1h.length>30) data1h.shift(); }
-            if(data1h.length%3===0) { dataDaily.push({...currentCandle}); if(dataDaily.length>30) dataDaily.shift(); }
-            if(dataDaily.length%3===0) { dataWeekly.push({...currentCandle}); if(dataWeekly.length>30) dataWeekly.shift(); }
-            currentCandle = { o: price, h: price, l: price, c: price, ticks: 0 };
+        tickCount++;
+
+        // Update 1M forming candle
+        candle1m.h = Math.max(candle1m.h, price); candle1m.l = Math.min(candle1m.l, price); candle1m.c = price;
+
+        // Every 5 ticks = 1M candle finished
+        if (tickCount % 5 === 0) {
+            data1m.push({...candle1m}); if(data1m.length>30) data1m.shift();
+            // Update 5M forming candle based on finished 1M
+            candle5m.h = Math.max(candle5m.h, candle1m.h); candle5m.l = Math.min(candle5m.l, candle1m.l); candle5m.c = candle1m.c;
+            if(tickCount === 5) candle5m.o = candle1m.o; // Set open for the first 1M part
+            candle1m = { o:price, h:price, l:price, c:price }; // Reset 1M
         }
+
+        // Every 25 ticks = 5M candle finished
+        if (tickCount % 25 === 0) {
+            data5m.push({...candle5m}); if(data5m.length>30) data5m.shift();
+            candle5m = { o:price, h:price, l:price, c:price }; // Reset 5M
+            tickCount = 0;
+        }
+        // Daily/Weekly do NOT update here (static background)
+
         drawAllCharts(); drawBoard(); updateUI();
     }
 
-    function drawCandles(id, data) {
+    function drawCandles(id, data, formingCandle = null) {
         const c = document.getElementById(id); const ctx = c.getContext('2d');
         const w = c.width = c.offsetWidth * 2; const h = c.height = c.offsetHeight * 2;
-        ctx.scale(2,2); const cw = w/2, ch = h/2;
-        ctx.clearRect(0,0,cw,ch);
-        ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1;
-        for(let i=1; i<8; i++) { let y = (ch / 8) * i; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cw, y); ctx.stroke(); }
+        ctx.scale(2,2); const cw = w/2, ch = h/2; ctx.clearRect(0,0,cw,ch);
+        const drawData = [...data]; if(formingCandle) drawData.push(formingCandle); // Add forming candle temporarily
+        
         const space = cw / 32, getY = (val) => ch - ((val - 68) / (132 - 68)) * ch;
-        data.forEach((d, i) => {
+        drawData.forEach((d, i) => {
             const x = i * space + space, up = d.c >= d.o, color = up ? '#ff3131' : '#00e676';
             ctx.strokeStyle = color; ctx.lineWidth = 1.2;
             ctx.beginPath(); ctx.moveTo(x, getY(d.h)); ctx.lineTo(x, getY(d.l)); ctx.stroke();
@@ -180,14 +194,19 @@
         });
     }
 
-    function drawAllCharts() { drawCandles('chart5m', data5m); drawCandles('chart1h', data1h); drawCandles('chartDaily', dataDaily); drawCandles('chartWeekly', dataWeekly); }
+    function drawAllCharts() {
+        // Pass forming candles to 1M and 5M charts
+        drawCandles('chart1m', data1m, candle1m);
+        drawCandles('chart5m', data5m, candle5m);
+        // Daily/Weekly only draw historical data
+        drawCandles('chartDaily', dataDaily);
+        drawCandles('chartWeekly', dataWeekly);
+    }
 
     function drawBoard() {
         const askA = document.getElementById('ask-rows'), bidA = document.getElementById('bid-rows'), midA = document.getElementById('mid-val-display');
         let askH = '', bidH = '';
-        // 10 levels above
         for(let i=10; i>=1; i--) askH += `<div class="board-row"><span class="ask-price">${(price + i*0.1).toFixed(1)}</span><span style="color:#444">${Math.floor(Math.random()*900+50)}</span></div>`;
-        // 10 levels below
         for(let i=1; i<=10; i++) bidH += `<div class="board-row"><span class="bid-price">${(price - i*0.1).toFixed(1)}</span><span style="color:#444">${Math.floor(Math.random()*900+50)}</span></div>`;
         askA.innerHTML = askH; bidA.innerHTML = bidH;
         midA.innerText = price.toFixed(1); midA.style.color = price >= lastPrice ? 'var(--up)' : 'var(--down)';
@@ -202,18 +221,20 @@
 
     function updateUI() {
         const total = user.cash + (user.hold * price);
-        document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+        document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 1});
         document.getElementById('cash-val').innerText = (user.cash/1000).toFixed(1) + 'k';
         document.getElementById('hold-val').innerText = user.hold;
-
         const allTraders = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
         const myRank = allTraders.findIndex(t => t.me) + 1;
         document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
 
-        let listH = ''; 
-        allTraders.slice(0, 30).forEach((l, i) => {
-            listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`;
-        });
+        if (myRank === 1 && !hasWon) {
+            hasWon = true;
+            document.getElementById('victory-overlay').style.display = 'flex';
+            document.getElementById('winner-name').innerText = userName;
+            confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 }, colors: ['#ffd700', '#ff8fab', '#ffffff'] });
+        }
+        let listH = ''; allTraders.forEach((l, i) => { listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
         document.getElementById('ranking-list').innerHTML = listH;
         document.getElementById('s1').disabled = user.hold < 1; document.getElementById('smax').disabled = user.hold < 1;
     }
