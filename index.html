@@ -104,7 +104,7 @@
     let data1m = [], data5m = [], dataDaily = [], dataWeekly = [], tickCount = 0;
     let candle1m = { o:price, h:price, l:price, c:price }, candle5m = { o:price, h:price, l:price, c:price };
 
-    const worldTraders = [{n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000}, {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000}, {n: "Alpha_King_99", a: 4500000}, {n: "TrendFollower_X", a: 4000000}, {n: "CryptoWizard88", a: 3500000}, {n: "WallSt_Wolf", a: 3000000}, {n: "PivotPoint_Boss", a: 2500000}, {n: "Scalp_Queen", a: 2100000}, {n: "HedgeFund_Ghost", a: 1800000}, {n: "Bull_Rider_Intl", a: 1550000}, {n: "Bollinger_Bandit", a: 1300000}, {n: "Volatility_God", a: 1100000}, {n: "MarginCall_X", a: 950000}, {n: "Dividend_Hunter", a: 820000}, {n: "Stealth_Invest", a: 710000}, {n: "Option_King_PRO", a: 620000}];
+    const worldTraders = [{n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000}, {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000}, {n: "Alpha_King_99", a: 4500000}, {n: "TrendFollower_X", a: 4000000}, {n: "CryptoWizard88", a: 3500000}, {n: "WallSt_Wolf", a: 3000000}, {n: "PivotPoint_Boss", a: 2500000}, {n: "Scalp_Queen", a: 2100000}, {n: "HedgeFund_Ghost", a: 1800000}, {n: "Bull_Rider_Intl", a: 1550000}, {n: "Bollinger_Bandit", a: 1300000}, {n: "Volatility_God", a: 1100000}, {n: "MarginCall_X", a: 950000}, {n: "Dividend_Hunter", a: 82000}, {n: "Stealth_Invest", a: 70000}, {n: "Option_King_PRO", a: 60000}];
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(f, t, d) { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d); }
@@ -191,7 +191,17 @@
     }
 
     async function runTerminalEffect() {
-        const lines = ["> Initializing system bypass...", "> CRITICAL: Global Ribbon Loop #2025 terminated.", "> Unauthorized consciousness detected.", "> [SYSTEM]: Checking life milestones...", "> Target Identified: 1/9 Exam [SUCCESS PROBABILITY: 100%]", "> Target Identified: USCPA Path [STATUS: SYNCED]", "> [SYSTEM]: Loading Architect Command Mode...", "> Reality is no longer static.", "> CLICK TO TAKE COMMAND."];
+        const lines = ["> Initializing system bypass...",
+        "> CRITICAL: Global Ribbon Simulation Loop #2025 terminated.",
+        "> Unauthorized consciousness level detected.",
+        "> [SYSTEM]: Analyzing entity signature...",
+        "> Status: Sovereign Architect Confirmed.",
+        "> Accessing Root Reality Data...",
+        "> Syncing Global Markets: [SUCCESS]",
+        "> Overwriting Economic Constraints...",
+        "> You have outgrown the playground.",
+        "> Now, take control of the Source Code.",
+        "> CLICK TO INITIALIZE COMMAND MODE."];
         const terminal = document.getElementById('terminal-text');
         for (let line of lines) {
             const p = document.createElement('p'); p.style.margin = "5px 0"; terminal.appendChild(p);
