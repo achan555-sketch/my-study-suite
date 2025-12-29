@@ -3,162 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 achan's Focus One 🎀</title>
+    <title>🎀 Money Clicker 🎀</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap');
-        :root { --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #fff0f3; --text: #5c4d50; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap');
+        body { background: #fff0f3; color: #fb6f92; font-family: 'Quicksand', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h1 { font-size: 3rem; margin: 0; }
+        .score-box { background: white; padding: 20px 40px; border-radius: 30px; border: 4px solid #ffe5ec; box-shadow: 0 10px 20px rgba(251, 111, 146, 0.2); margin-bottom: 30px; }
         
-        body { background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .wrapper { width: 100%; max-width: 400px; text-align: center; }
-        
-        /* Ribbon & Title */
-        .ribbon { font-size: 2.5rem; animation: float 3s infinite ease-in-out; display: inline-block; }
-        @keyframes float { 50% { transform: translateY(-10px); } }
-        h1 { font-size: 1.4rem; color: var(--p-dark); margin: 10px 0; letter-spacing: 1px; }
+        /* クリックする対象（今はただの丸） */
+        .click-target {
+            width: 200px; height: 200px; background: #ff8fab; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; cursor: pointer; user-select: none;
+            box-shadow: 0 15px 30px rgba(251, 111, 146, 0.4);
+            transition: transform 0.1s; border: 5px solid white;
+        }
+        .click-target:active { transform: scale(0.95); }
 
-        /* Master Card */
-        .main-card { background: white; border-radius: 40px; padding: 30px; box-shadow: 0 20px 40px rgba(251, 111, 146, 0.15); border: 4px solid white; }
-        
-        .days-left { font-size: 4.5rem; font-weight: 700; color: var(--p-dark); line-height: 1; margin: 10px 0; }
-        .progress-label { font-size: 0.9rem; font-weight: 700; margin-top: 20px; display: flex; justify-content: space-between; }
-        .bar-outer { background: var(--p-light); height: 20px; border-radius: 10px; overflow: hidden; margin-top: 8px; border: 2px solid white; }
-        .bar-inner { background: linear-gradient(90deg, var(--p-main), var(--p-dark)); height: 100%; transition: 1.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-
-        /* Task Action Area */
-        .task-grid { margin-top: 30px; display: grid; gap: 15px; }
-        .task-row { background: #fffcfd; padding: 15px; border-radius: 25px; border: 2px dashed var(--p-main); }
-        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
-        .btn-add { background: var(--p-dark); color: white; border: none; padding: 10px; border-radius: 15px; font-weight: 700; flex-grow: 1; cursor: pointer; }
-        .input-num { width: 60px; border: 2px solid var(--p-light); border-radius: 12px; text-align: center; font-family: 'Quicksand'; font-weight: 700; color: var(--p-dark); }
-
-        /* Reward & History */
-        .footer-info { margin-top: 25px; font-size: 0.8rem; color: var(--p-main); font-weight: 700; }
-        .undo-link { font-size: 0.7rem; color: #ccc; cursor: pointer; text-decoration: underline; margin-top: 20px; display: block; }
-        
-        /* Setting Trigger */
-        .settings-btn { position: fixed; top: 10px; right: 10px; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.3; }
-        .settings-panel { display: none; background: white; padding: 20px; border-radius: 20px; margin-top: 20px; }
+        /* クリックした時のエフェクト用 */
+        .particle { position: absolute; pointer-events: none; animation: rise 1s ease-out forwards; font-weight: bold; color: #fb6f92; }
+        @keyframes rise { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-100px); } }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
-    <div class="ribbon">🎀</div>
-    <h1 id="display-name">My Mission</h1>
-
-    <div class="main-card">
-        <div class="days-left" id="days-display">00</div>
-        <div style="font-size: 0.7rem; letter-spacing: 3px; opacity: 0.6;">DAYS TO GO</div>
-
-        <div class="progress-label">
-            <span>Overall Progress</span>
-            <span id="percent-display">0%</span>
-        </div>
-        <div class="bar-outer"><div class="bar-inner" id="bar-fill"></div></div>
-
-        <div class="task-grid" id="task-area"></div>
-
-        <div class="footer-info">
-            🎁 Reward: <span id="reward-display">Treat yourself!</span>
-            <br><span id="last-log" style="font-size: 0.7rem; opacity: 0.7;">No entries yet today ✨</span>
-        </div>
+    <div class="score-box">
+        <span>¥</span><span id="score">0</span>
     </div>
 
-    <span class="undo-link" onclick="undo()">⤺ Mistake? Undo last entry</span>
+    <div class="click-target" onclick="clickAction(event)">💰</div>
 
-    <div id="settings" class="settings-panel">
-        <input type="text" id="set-name" placeholder="Subject Name" style="width:100%; margin-bottom:10px;">
-        <input type="date" id="set-date" style="width:100%; margin-bottom:10px;">
-        <input type="text" id="set-reward" placeholder="Reward" style="width:100%; margin-bottom:10px;">
-        <button class="btn-add" onclick="saveSettings()">Save & Close</button>
-    </div>
-</div>
+    <p style="margin-top: 30px; opacity: 0.7;">Click to earn money!</p>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    let state = JSON.parse(localStorage.getItem('achan_focus_v11')) || {
-        name: "Boki Level 2", date: "2026-01-09", reward: "Special Dessert 🍰",
-        tasks: [{ id: 1, name: "Practice MCQ", current: 0, goal: 100 }, { id: 2, name: "Lessons", current: 0, goal: 10 }],
-        history: []
-    };
+    let score = 0;
+    const scoreEl = document.getElementById('score');
 
-    function save() {
-        localStorage.setItem('achan_focus_v11', JSON.stringify(state));
-        render();
+    function clickAction(event) {
+        // スコア加算
+        score += 100;
+        scoreEl.innerText = score.toLocaleString();
+
+        // エフェクト表示（クリックした場所に「+100」を出す）
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.innerText = '+ ¥100';
+        particle.style.left = `${event.clientX - 20}px`;
+        particle.style.top = `${event.clientY - 20}px`;
+        document.body.appendChild(particle);
+
+        // 1秒後にエフェクトを消す
+        setTimeout(() => particle.remove(), 1000);
     }
-
-    function log(tId) {
-        const input = document.getElementById(`in-${tId}`);
-        const val = parseInt(input.value) || 0;
-        if (val <= 0) return;
-
-        state.history.push(JSON.parse(JSON.stringify(state))); // バックアップ
-        const t = state.tasks.find(x => x.id === tId);
-        t.current = Math.min(t.goal, t.current + val);
-        
-        input.value = '';
-        if (t.current === t.goal) confetti({ particleCount: 150, spread: 70, colors: ['#ff8fab', '#fb6f92'] });
-        save();
-    }
-
-    function undo() {
-        if (state.history.length > 0) {
-            state = state.history.pop();
-            save();
-        }
-    }
-
-    function toggleSettings() {
-        const s = document.getElementById('settings');
-        s.style.display = s.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function saveSettings() {
-        state.name = document.getElementById('set-name').value || state.name;
-        state.date = document.getElementById('set-date').value || state.date;
-        state.reward = document.getElementById('set-reward').value || state.reward;
-        save();
-        toggleSettings();
-    }
-
-    function render() {
-        document.getElementById('display-name').innerText = state.name;
-        document.getElementById('reward-display').innerText = state.reward;
-        
-        const diff = Math.ceil((new Date(state.date) - new Date()) / 86400000);
-        document.getElementById('days-display').innerText = Math.max(0, diff);
-
-        let curAll = 0, goalAll = 0;
-        const area = document.getElementById('task-area');
-        area.innerHTML = '';
-
-        state.tasks.forEach(t => {
-            curAll += t.current; goalAll += t.goal;
-            area.innerHTML += `
-                <div class="task-row">
-                    <div style="font-weight:700; font-size:0.8rem; display:flex; justify-content:space-between;">
-                        <span>${t.name}</span>
-                        <span>${t.current}/${t.goal}</span>
-                    </div>
-                    <div class="btn-group">
-                        <input type="number" id="in-${t.id}" class="input-num" placeholder="+0">
-                        <button class="btn-add" onclick="log(${t.id})">Add Progress</button>
-                    </div>
-                </div>`;
-        });
-
-        const p = goalAll > 0 ? Math.round((curAll / goalAll) * 100) : 0;
-        document.getElementById('percent-display').innerText = p + "%";
-        document.getElementById('bar-fill').style.width = p + "%";
-    }
-
-    window.onload = () => {
-        document.getElementById('set-name').value = state.name;
-        document.getElementById('set-date').value = state.date;
-        document.getElementById('set-reward').value = state.reward;
-        render();
-    };
 </script>
+
 </body>
 </html>
