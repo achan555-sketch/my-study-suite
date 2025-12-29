@@ -3,36 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Ribbon Exchange: Sovereign v30</title>
+    <title>Global Ribbon Exchange: Sovereign v31</title>
     <style>
-        /* 本格的な多角形の破片 */
-.shard {
-    position: fixed;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    z-index: 5000;
-    pointer-events: none;
-}
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
+        :root { --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0d0d0d; --card: #1a1a1a; --up: #ff3131; --down: #00e676; --text: #ffffff; --gold: #ffd700; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); }
+        
+        /* 💎 Shatter Shards */
+        .shard { position: fixed; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.6); z-index: 5000; pointer-events: none; }
 
-/* シミュレーション脱出画面 */
-#matrix-screen {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    color: #00ff41; /* マトリックス・グリーン */
-    font-family: 'Roboto Mono', monospace;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    padding: 10% 15%;
-    z-index: 6000;
-    font-size: 1.2rem;
-    line-height: 1.8;
-}
+        /* 📟 Matrix Terminal Screen */
+        #matrix-screen { position: fixed; inset: 0; background: #000; color: #00ff41; font-family: 'Roboto Mono', monospace; display: none; flex-direction: column; justify-content: center; padding: 10% 15%; z-index: 6000; font-size: 1.2rem; line-height: 1.8; }
+        .cursor { display: inline-block; width: 10px; height: 1.2rem; background: #00ff41; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 5px; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-.cursor { display: inline-block; width: 10px; height: 1.2rem; background: #00ff41; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 5px; }
-@keyframes blink { 50% { opacity: 0; } }
+        /* 👑 God Mode UI */
+        #start-overlay, #god-overlay { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #start-overlay { background: #fff0f3; color: #5c4d50; }
+        #god-overlay { display: none; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 3000; border: 15px solid var(--gold); box-sizing: border-box; }
+        .god-btn { width: 280px; height: 180px; border: 4px solid var(--gold); background: transparent; color: white; font-family: 'Quicksand'; font-size: 1.8rem; font-weight: 700; cursor: pointer; border-radius: 25px; transition: 0.3s; margin: 0 25px; }
+        .god-btn:hover { background: var(--gold); color: black; transform: scale(1.1); box-shadow: 0 0 50px var(--gold); }
+        .quote-display { display: none; position: fixed; inset: 0; background: black; z-index: 4000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px; }
+
+        /* 📊 Layout */
+        .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; transition: 0.5s; }
+        .left-panel { flex: 0 0 50%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
+        .chart-box { background: #000; border-radius: 12px; padding: 8px; border: 1px solid #333; position: relative; aspect-ratio: 1/1; }
+        .chart-label { color: #888; font-size: 0.6rem; font-weight: bold; position: absolute; top: 8px; left: 10px; z-index: 5; }
+        canvas { width: 100%; height: 100%; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+        .card { background: var(--card); border-radius: 15px; padding: 12px; border: 1px solid #333; }
+        .board-card { background: #000; font-family: 'Roboto Mono'; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; border: 2px solid #222; border-radius: 15px; }
+        .scroll-area { flex-grow: 1; overflow-y: auto; padding: 0 10px; scrollbar-width: none; }
+        .board-row { display: flex; justify-content: space-between; height: 18px; align-items: center; font-size: 0.85rem; }
+        .mid-price-line { background: #1a1a1a; text-align: center; padding: 8px; border-top: 1px solid #333; border-bottom: 1px solid #333; margin: 5px 0; font-weight: bold; font-size: 1.3rem; border-radius: 8px; }
+        .trade-card { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn { border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; color: white; font-family: 'Quicksand'; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -40,23 +46,27 @@
 <div id="start-overlay">
     <span style="font-size:3.5rem;">🌍</span>
     <h1>GLOBAL RIBBON EXCHANGE</h1>
-    <input type="text" id="user-name-input" style="padding:15px; border-radius:15px; border:3px solid #ffe5ec; width:300px; font-size:1.3rem; text-align:center; margin-bottom:20px; outline:none;" placeholder="Enter Your Trader Name" maxlength="12">
-    <button onclick="startGame()" style="background:#fb6f92; color:white; border:none; padding:15px 50px; border-radius:15px; cursor:pointer; font-weight:700; font-size:1.3rem;">ENTER CHAMPIONSHIP</button>
+    <input type="text" id="user-name-input" style="padding:15px; border-radius:15px; border:3px solid #ffe5ec; width:300px; font-size:1.3rem; text-align:center; margin-bottom:20px; outline:none;" placeholder="Trader Handle" maxlength="12">
+    <button onclick="startGame()" style="background:#fb6f92; color:white; border:none; padding:15px 50px; border-radius:15px; cursor:pointer; font-weight:700; font-size:1.3rem;">INITIALIZE CONNECT</button>
 </div>
 
 <div id="god-overlay">
     <h1 style="color:var(--gold); font-size:3.5rem; text-shadow:0 0 30px var(--gold);">SOVEREIGN PATH</h1>
-    <p style="font-size:1.5rem; margin-bottom:40px; color:rgba(255,255,255,0.7);">The world is shattered. Choose your destiny.</p>
+    <p style="font-size:1.5rem; margin-bottom:40px; color:rgba(255,255,255,0.7);">Choose your reality. ASCEND or JUDGE.</p>
     <div>
         <button class="god-btn" onclick="divineChoice(0)">PATH ALPHA</button>
         <button class="god-btn" onclick="divineChoice(1)">PATH OMEGA</button>
     </div>
 </div>
 
+<div id="matrix-screen">
+    <div id="terminal-text"></div><span class="cursor"></span>
+</div>
+
 <div id="quote-screen" class="quote-display">
     <h1 id="quote-title" style="font-size:4rem; margin-bottom:20px;"></h1>
     <p id="quote-text" style="font-size:1.8rem; font-style:italic; max-width:900px; color:#ccc; line-height:1.6;"></p>
-    <button onclick="location.reload()" style="margin-top:60px; background:var(--gold); border:none; padding:18px 45px; border-radius:15px; font-weight:700; cursor:pointer; font-size:1.1rem;">RETURN TO MARKET</button>
+    <button onclick="location.reload()" style="margin-top:60px; background:var(--gold); border:none; padding:18px 45px; border-radius:15px; font-weight:700; cursor:pointer; font-size:1.1rem;">BACK TO SOURCE</button>
 </div>
 
 <div class="main-container" id="main-container">
@@ -68,24 +78,21 @@
     </div>
     <div class="right-panel">
         <div class="card" style="display:flex; justify-content:space-between; align-items:center; border-left:5px solid var(--p-main);">
-            <div><div id="disp-name" style="font-size:0.6rem; opacity:0.6;">TRADER</div><div style="font-size:1.5rem; font-weight:700; color:var(--p-main); font-family:'Roboto Mono';"><span id="total-val">100,000.0</span> <small style="font-size:0.7rem;">GRB</small></div></div>
+            <div><div id="disp-name" style="font-size:0.6rem; opacity:0.6;">IDENTIFIED: UNKNOWN</div><div style="font-size:1.5rem; font-weight:700; color:var(--p-main); font-family:'Roboto Mono';"><span id="total-val">100,000.0</span> <small style="font-size:0.7rem;">GRB</small></div></div>
             <div id="rank-display" style="font-size:0.8rem; font-weight:bold; color:var(--gold);">#?? WORLD</div>
         </div>
         <div class="card board-card">
-            <div style="display:flex; justify-content:space-between; color:#444; font-size:0.7rem; padding:5px 15px; border-bottom:1px solid #222;"><span>PRICE</span><span>QUANTITY</span></div>
-            <div class="scroll-area">
-                <div id="ask-rows"></div><div class="mid-price-line" id="mid-val-display">100.0</div><div id="bid-rows"></div>
-            </div>
+            <div style="display:flex; justify-content:space-between; color:#444; font-size:0.7rem; padding:5px 15px; border-bottom:1px solid #222;"><span>BID/ASK</span><span>QTY</span></div>
+            <div class="scroll-area"><div id="ask-rows"></div><div class="mid-price-line" id="mid-val-display">100.0</div><div id="bid-rows"></div></div>
         </div>
         <div class="card trade-card">
             <button class="btn" style="background:var(--up)" onclick="trade('buy', 1)">BUY 1</button><button class="btn" style="background:var(--down)" onclick="trade('sell', 1)">SELL 1</button>
             <button class="btn" style="background:var(--up); opacity:0.8" onclick="trade('buy','max')">ALL IN</button><button class="btn" style="background:var(--down); opacity:0.8" onclick="trade('sell','max')">EXIT ALL</button>
             <div style="grid-column: span 2; font-size:0.7rem; display:flex; justify-content:space-between; opacity:0.6; font-family:'Roboto Mono';">
-                <span>CASH: <span id="cash-val">100.0k</span></span><span>HOLD: <span id="hold-val">0</span></span>
+                <span>LIQUIDITY: <span id="cash-val">100.0k</span></span><span>HOLDINGS: <span id="hold-val">0</span></span>
             </div>
         </div>
         <div class="card" style="font-size:0.8rem; background:#0a0a0a; height:160px; overflow-y:auto; flex-shrink:0;">
-            <div style="padding:8px 12px; color:var(--p-main); font-weight:700; border-bottom:1px solid #222;">🌍 WORLD TOP 30</div>
             <div id="ranking-list"></div>
         </div>
     </div>
@@ -97,46 +104,24 @@
     let data1m = [], data5m = [], dataDaily = [], dataWeekly = [], tickCount = 0;
     let candle1m = { o:price, h:price, l:price, c:price }, candle5m = { o:price, h:price, l:price, c:price };
 
-    // 🏆 Realistic User Names Ranking
-    const worldTraders = [
-        {n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
-        {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000},
-        {n: "Alpha_King_99", a: 4500000}, {n: "TrendFollower_X", a: 4000000}, {n: "CryptoWizard88", a: 3500000},
-        {n: "WallSt_Wolf", a: 3000000}, {n: "Sakura_Trader", a: 2500000}, {n: "BlueChip_Master", a: 2100000},
-        {n: "Global_Macro_JP", a: 1800000}, {n: "Scalp_Queen", a: 1550000}, {n: "GoldenCross_7", a: 1300000},
-        {n: "PivotPoint_Boss", a: 1100000}, {n: "Daytrade_Samurai", a: 950000}, {n: "HedgeFund_Ghost", a: 820000},
-        {n: "Bull_Rider_Intl", a: 710000}, {n: "CandleStick_Genie", a: 620000}, {n: "HighFreq_Scalper", a: 540000},
-        {n: "Fibonacci_Fanatic", a: 470000}, {n: "RSI_Overbought", a: 410000}, {n: "Bollinger_Bandit", a: 360000},
-        {n: "Volatility_God", a: 320000}, {n: "MarginCall_Survivor", a: 280000}, {n: "Dividend_Hunter", a: 240000},
-        {n: "Liquid_Asset_PRO", a: 98000}, {n: "Market_Maker_Z", a: 75000}, {n: "Stealth_Invest", a: 10000}
-    ];
+    const worldTraders = [{n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000}, {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000}, {n: "Alpha_King_99", a: 4500000}, {n: "TrendFollower_X", a: 4000000}, {n: "CryptoWizard88", a: 3500000}, {n: "WallSt_Wolf", a: 3000000}, {n: "PivotPoint_Boss", a: 2500000}, {n: "Scalp_Queen", a: 2100000}, {n: "HedgeFund_Ghost", a: 1800000}, {n: "Bull_Rider_Intl", a: 1550000}, {n: "Bollinger_Bandit", a: 1300000}, {n: "Volatility_God", a: 1100000}, {n: "MarginCall_X", a: 950000}, {n: "Dividend_Hunter", a: 820000}, {n: "Stealth_Invest", a: 710000}, {n: "Option_King_PRO", a: 620000}];
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSound(f, t, d) { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(0.1, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d); }
-
-    function createShatter() {
-        for (let i = 0; i < 40; i++) {
-            const p = document.createElement('div'); p.className = 'shatter-piece'; const s = Math.random()*60+20; p.style.width = s+'px'; p.style.height = s+'px';
-            p.style.left = Math.random()*100+'vw'; p.style.top = Math.random()*100+'vh'; document.body.appendChild(p);
-            p.animate([{transform:'translate(0,0) rotate(0deg)', opacity:1}, {transform:`translate(${(Math.random()-0.5)*1200}px, ${(Math.random()-0.5)*1200}px) rotate(${Math.random()*720}deg)`, opacity:0}], {duration:1000, easing:'ease-out', fill:'forwards'});
-            setTimeout(() => p.remove(), 1000);
-        }
-        playSound(200, 'square', 0.2); playSound(100, 'sawtooth', 0.3);
-    }
-
-    function startGame() {
-        userName = document.getElementById('user-name-input').value || "Trader";
-        document.getElementById('disp-name').innerText = `TRADER: ${userName}`;
-        document.getElementById('start-overlay').style.display = 'none';
-        preGen(); setInterval(update, 600);
-        window.addEventListener('keydown', (e) => { if(e.key.toLowerCase()==='v'){ user.cash=100000000; updateUI(); } });
-    }
 
     function preGen() {
         let p = price;
         for(let i=0; i<30; i++) { p+=(Math.random()-0.5)*3; data1m.push({o:p, h:p+0.5, l:p-0.5, c:p}); }
         p = price; for(let i=0; i<30; i++){ let o=p+(Math.random()-0.5)*8, c=o+(Math.random()-0.5)*12; dataDaily.push({o:o, h:Math.max(o,c)+2, l:Math.min(o,c)-2, c:c}); p=c; }
         p = price; for(let i=0; i<30; i++){ let o=p+(Math.random()-0.5)*15, c=o+(Math.random()-0.5)*25; dataWeekly.push({o:o, h:Math.max(o,c)+5, l:Math.min(o,c)-5, c:c}); p=c; }
+    }
+
+    function startGame() {
+        userName = document.getElementById('user-name-input').value || "Anonymous";
+        document.getElementById('disp-name').innerText = `IDENTIFIED: ${userName}`;
+        document.getElementById('start-overlay').style.display = 'none';
+        preGen(); setInterval(update, 600);
+        window.addEventListener('keydown', (e) => { if(e.key.toLowerCase()==='v'){ user.cash=100000000; updateUI(); } });
     }
 
     function update() {
@@ -156,7 +141,7 @@
             const c = document.getElementById(id), ctx = c.getContext('2d'), w = c.width = c.offsetWidth*2, h = c.height = c.offsetHeight*2; ctx.scale(2,2); ctx.clearRect(0,0,w/2,h/2);
             let d = (id==='chart1m')?data1m:(id==='chart5m')?data5m:(id==='chartDaily')?dataDaily:dataWeekly; if(!d.length) return;
             let minV = Math.min(...d.map(v=>v.l)), maxV = Math.max(...d.map(v=>v.h)), range = (maxV-minV)||1, pad = range*0.15;
-            const getY = (val) => (h/2) - ((val - (minV - pad)) / (range + pad * 2)) * (h/2);
+            const getY = (val) => (h/2) - ((val - (minV - pad)) / (range + pad*2)) * (h/2);
             d.forEach((v, i) => {
                 const x = i*(w/70)+(w/4-d.length*(w/140)), up = v.c>=v.o, col = up ? '#ff3131':'#00e676';
                 ctx.strokeStyle = col; ctx.beginPath(); ctx.moveTo(x, getY(v.h)); ctx.lineTo(x, getY(v.l)); ctx.stroke();
@@ -169,14 +154,8 @@
     function drawBoard() {
         const askA = document.getElementById('ask-rows'), bidA = document.getElementById('bid-rows');
         let askH = '', bidH = '';
-        for(let i=10; i>=1; i--) {
-            let p = (price + i*0.1).toFixed(1); let q = Math.floor(Math.random()*800 + 100);
-            askH += `<div class="board-row"><span style="color:var(--up); font-weight:bold;">${p}</span><span style="color:#666;">${q}</span></div>`;
-        }
-        for(let i=1; i<=10; i++) {
-            let p = (price - i*0.1).toFixed(1); let q = Math.floor(Math.random()*800 + 100);
-            bidH += `<div class="board-row"><span style="color:var(--down); font-weight:bold;">${p}</span><span style="color:#666;">${q}</span></div>`;
-        }
+        for(let i=10; i>=1; i--) { let p = (price + i*0.1).toFixed(1), q = Math.floor(Math.random()*800 + 100); askH += `<div class="board-row"><span style="color:var(--up);">${p}</span><span style="color:#666;">${q}</span></div>`; }
+        for(let i=1; i<=10; i++) { let p = (price - i*0.1).toFixed(1), q = Math.floor(Math.random()*800 + 100); bidH += `<div class="board-row"><span style="color:var(--down);">${p}</span><span style="color:#666;">${q}</span></div>`; }
         askA.innerHTML = askH; bidA.innerHTML = bidH;
         const mv = document.getElementById('mid-val-display'); mv.style.color = price >= lastPrice ? 'var(--up)' : 'var(--down)';
     }
@@ -186,21 +165,44 @@
         document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits:1});
         document.getElementById('cash-val').innerText = (user.cash/1000).toFixed(1) + 'k';
         document.getElementById('hold-val').innerText = user.hold;
-        
-        // 🏆 Dynamic Integration of User into Top 30
         const all = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
-        const myRank = all.findIndex(t => t.me) + 1; 
-        document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
-        
-        if (myRank === 1 && !hasWon) {
-            hasWon = true; createShatter();
-            setTimeout(() => { document.getElementById('main-container').style.filter = 'blur(15px)'; document.getElementById('god-overlay').style.display = 'flex'; }, 700);
-        }
-        
-        let listH = ''; all.slice(0, 30).forEach((l, i) => { 
-            listH += `<div style="display:flex; justify-content:space-between; padding:5px 12px; border-bottom:1px solid #222; ${l.me?'color:var(--p-main); font-weight:bold; background:rgba(255,143,171,0.1);':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; 
-        });
+        const myRank = all.findIndex(t => t.me) + 1; document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
+        if (myRank === 1 && !hasWon) triggerSovereignMode();
+        let listH = ''; all.slice(0, 30).forEach((l, i) => { listH += `<div style="display:flex; justify-content:space-between; padding:5px 12px; border-bottom:1px solid #222; ${l.me?'color:var(--p-main); font-weight:bold; background:rgba(255,143,171,0.1);':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
         document.getElementById('ranking-list').innerHTML = listH;
+    }
+
+    async function triggerSovereignMode() {
+        hasWon = true; const container = document.body;
+        for (let i = 0; i < 60; i++) {
+            const shard = document.createElement('div'); shard.className = 'shard';
+            const size = Math.random() * 80 + 40; shard.style.width = size + 'px'; shard.style.height = size + 'px';
+            shard.style.left = Math.random() * 100 + 'vw'; shard.style.top = Math.random() * 100 + 'vh';
+            shard.style.clipPath = `polygon(${Math.random()*100}% 0%, 100% ${Math.random()*100}%, ${Math.random()*100}% 100%, 0% ${Math.random()*100}%)`;
+            container.appendChild(shard);
+            shard.animate([{ transform: 'translate(0,0) rotate(0deg) scale(1)', opacity: 1 }, { transform: `translate(${(Math.random()-0.5)*2000}px, ${(Math.random()-0.5)*2000}px) rotate(${Math.random()*1440}deg) scale(0)`, opacity: 0 }], { duration: 1500, easing: 'cubic-bezier(0.25, 1, 0.5, 1)', fill: 'forwards' });
+        }
+        playSound(150, 'sawtooth', 0.6);
+        setTimeout(() => {
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('matrix-screen').style.display = 'flex';
+            runTerminalEffect();
+        }, 1000);
+    }
+
+    async function runTerminalEffect() {
+        const lines = ["> Initializing system bypass...", "> CRITICAL: Global Ribbon Loop #2025 terminated.", "> Unauthorized consciousness detected.", "> [SYSTEM]: Checking life milestones...", "> Target Identified: 1/9 Exam [SUCCESS PROBABILITY: 100%]", "> Target Identified: USCPA Path [STATUS: SYNCED]", "> [SYSTEM]: Loading Architect Command Mode...", "> Reality is no longer static.", "> CLICK TO TAKE COMMAND."];
+        const terminal = document.getElementById('terminal-text');
+        for (let line of lines) {
+            const p = document.createElement('p'); p.style.margin = "5px 0"; terminal.appendChild(p);
+            for (let char of line) { p.textContent += char; await new Promise(r => setTimeout(r, 35)); }
+            playSound(800, 'sine', 0.03); await new Promise(r => setTimeout(r, 450));
+        }
+        document.getElementById('matrix-screen').onclick = () => {
+            document.getElementById('matrix-screen').style.display = 'none';
+            document.getElementById('god-overlay').style.display = 'flex';
+            [523, 659, 783].forEach((f, i) => setTimeout(() => playSound(f, 'sine', 1.5), i * 300));
+        };
     }
 
     const quotes = [{t:"ASCENSION", c:"True sovereignty is not in winning the game, but in writing the rules.", s:[440, 660, 880]},{t:"JUDGMENT", c:"Even a king is a servant to time. The abyss awaits.", s:[220, 110, 55]}];
