@@ -3,27 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 GRX Pro: Real-Timeframe v21 🎀</title>
+    <title>🎀 GRX Pro: Sovereign Mode v22 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { 
             --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0d0d0d; --card: #1a1a1a;
-            --up: #ff3131; --down: #00e676; --text: #ffffff;
-            --gold: #ffd700;
+            --up: #ff3131; --down: #00e676; --text: #ffffff; --gold: #ffd700;
         }
         
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); }
         
-        /* Start & Victory Overlays */
-        #start-overlay, #victory-overlay { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* Overlays */
+        #start-overlay, #shatter-overlay, #god-overlay { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #start-overlay { background: #fff0f3; color: #5c4d50; }
-        #victory-overlay { background: rgba(0,0,0,0.85); display: none; }
-        .input-name { padding: 15px; border-radius: 15px; border: 3px solid var(--p-light); width: 300px; font-size: 1.3rem; text-align: center; margin-bottom: 20px; outline: none; }
-        .start-btn { background: var(--p-dark); color: white; border: none; padding: 12px 50px; border-radius: 15px; cursor: pointer; font-weight: 700; font-size: 1.3rem; }
-        .victory-card { background: linear-gradient(135deg, #fff, #fff0f3); color: #333; padding: 40px; border-radius: 30px; text-align: center; border: 4px solid var(--gold); box-shadow: 0 0 60px var(--gold); }
+        
+        /* Shatter Effect */
+        #shatter-overlay { background: white; opacity: 0; pointer-events: none; z-index: 2500; transition: opacity 0.1s; }
+        .shatter-active { opacity: 1 !important; animation: flash 0.5s ease-out; }
+        @keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* Main Layout */
-        .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; }
+        /* God Mode UI */
+        #god-overlay { 
+            display: none; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
+            z-index: 3000; border: 10px solid var(--gold); box-sizing: border-box; 
+        }
+        .god-title { color: var(--gold); font-size: 3rem; font-weight: 700; text-shadow: 0 0 20px var(--gold); margin-bottom: 30px; }
+        .god-btns { display: flex; gap: 40px; }
+        .god-btn { 
+            width: 250px; height: 150px; border: 3px solid var(--gold); background: transparent; 
+            color: white; font-family: 'Quicksand'; font-size: 1.5rem; font-weight: 700; cursor: pointer;
+            border-radius: 20px; transition: 0.3s; box-shadow: 0 0 15px rgba(255,215,0,0.3);
+        }
+        .god-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 40px var(--gold); transform: scale(1.1); }
+        
+        .quote-display { 
+            display: none; position: fixed; inset: 0; background: black; z-index: 4000;
+            flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px;
+        }
+
+        /* Layout (Balanced 50:50) */
+        .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; transition: filter 0.5s; }
         .left-panel { flex: 0 0 50%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
         .chart-box { background: #000; border-radius: 12px; padding: 8px; border: 1px solid #333; position: relative; aspect-ratio: 1/1; }
         .chart-label { color: #888; font-size: 0.6rem; font-weight: bold; position: absolute; top: 8px; left: 10px; z-index: 5; }
@@ -57,20 +76,28 @@
 <div id="start-overlay">
     <span style="font-size:3rem;">🎀</span>
     <h1>GLOBAL RIBBON EXCHANGE</h1>
-    <input type="text" id="user-name-input" class="input-name" placeholder="Trader Name" maxlength="10">
-    <button class="start-btn" onclick="startGame()">ENTER MARKET 🚀</button>
+    <input type="text" id="user-name-input" style="padding:15px; border-radius:15px; border:3px solid var(--p-light); width:300px; font-size:1.3rem; text-align:center; margin-bottom:20px; outline:none;" placeholder="Trader Name" maxlength="10">
+    <button onclick="startGame()" style="background:var(--p-dark); color:white; border:none; padding:12px 50px; border-radius:15px; cursor:pointer; font-weight:700; font-size:1.3rem;">START TRADING</button>
 </div>
 
-<div id="victory-overlay" onclick="this.style.display='none'">
-    <div class="victory-card">
-        <h1 style="color:var(--p-dark); margin:0;">👑 WORLD NO.1 👑</h1>
-        <p style="font-size:1.2rem; font-weight:bold;">Mars Traveler Surrendered!</p>
-        <p><span id="winner-name"></span> is the new Legend.</p>
-        <button class="start-btn" style="margin-top:20px; font-size:1rem;">CONTINUE TRADING</button>
+<div id="shatter-overlay"></div>
+
+<div id="god-overlay">
+    <div class="god-title">SOVEREIGN MODE</div>
+    <p style="font-size:1.2rem; margin-bottom:40px; opacity:0.8;">The world is shattered. Define the new reality.</p>
+    <div class="god-btns">
+        <button class="god-btn" onclick="divineChoice('ascension')">ASCENSION</button>
+        <button class="god-btn" onclick="divineChoice('judgment')">JUDGMENT</button>
     </div>
 </div>
 
-<div class="main-container">
+<div id="quote-screen" class="quote-display" onclick="location.reload()">
+    <h1 id="quote-title" style="font-size:3rem; margin-bottom:20px;"></h1>
+    <p id="quote-text" style="font-size:1.5rem; font-style:italic; max-width:800px; color:#aaa;"></p>
+    <p style="margin-top:50px; opacity:0.3; font-size:0.8rem;">Click anywhere to return to the world.</p>
+</div>
+
+<div class="main-container" id="main-container">
     <div class="left-panel">
         <div class="chart-box"><span class="chart-label">1M (NOW)</span><canvas id="chart1m"></canvas></div>
         <div class="chart-box"><span class="chart-label">5M (SHORT)</span><canvas id="chart5m"></canvas></div>
@@ -81,7 +108,7 @@
     <div class="right-panel">
         <div class="card stats-card">
             <div><div id="player-name" style="font-size:0.6rem; opacity:0.6;">TRADER: achan</div><div class="total-asset"><span id="total-val">100,000.0</span> <small style="font-size:0.6rem;">GRB</small></div></div>
-            <div id="rank-display" style="font-size: 0.75rem; font-weight: bold; color: gold;">#?? WORLD</div>
+            <div id="rank-display" style="font-size: 0.75rem; font-weight: bold; color: var(--gold);">#?? WORLD</div>
         </div>
 
         <div class="card board-card">
@@ -101,7 +128,6 @@
         </div>
 
         <div class="card ranking-card">
-            <div style="padding:8px 12px; color:var(--p-main); font-weight:700; font-size:0.7rem; border-bottom:1px solid #222;">🌍 WORLD PARODY RANKING</div>
             <div id="ranking-list"></div>
         </div>
     </div>
@@ -111,142 +137,72 @@
 <script>
     let userName = "achan", price = 100.0, lastPrice = 100.0, MIN = 70.0, MAX = 130.0;
     let user = { cash: 100000.0, hold: 0 }, hasWon = false;
-    
-    // Data Arrays
     let data1m = [], data5m = [], dataDaily = [], dataWeekly = [];
-    
-    // Simulation Counters & Temp Candles
-    let tickCount = 0;
-    let candle1m = { o:price, h:price, l:price, c:price };
-    let candle5m = { o:price, h:price, l:price, c:price };
+    let tickCount = 0, candle1m = { o:price, h:price, l:price, c:price }, candle5m = { o:price, h:price, l:price, c:price };
 
     const worldTraders = [
-        {n: "Mars Traveler 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
+        {n: "Eron Mask 🚀", a: 21000000}, {n: "Warren Buffet 🍰", a: 15000000}, {n: "Jeff Amazo 📦", a: 12000000},
         {n: "Jensen AI 🤖", a: 8000000}, {n: "Zuck Meta 👥", a: 6000000}, {n: "Bill Windows 💻", a: 5000000},
-        {n: "Ribbon Oracle 🔮", a: 4000000}, {n: "Giraffe Queen 🦒", a: 3500000}, {n: "Toppan Elite 🏢", a: 2500000},
-        {n: "USCPA Fighter 🇺🇸", a: 1800000}, {n: "Daytrade Cat 🐱", a: 950000}, {n: "Whale Watching 🐳", a: 800000},
-        {n: "Diamond Hands 💎", a: 600000}, {n: "Coffee Addict ☕", a: 400000}, {n: "Smart AI 🦾", a: 150000}
-    ];
+        {n: "Mars Traveler 🛰️", a: 4500000}, {n: "Ribbon Oracle 🔮", a: 4000000}, {n: "Giraffe Queen 🦒", a: 3500000}
+    ].concat(Array.from({length:21}, (_,i) => ({n:`Bot-${i+1}`, a: (20-i)*100000})));
 
     function preGenerateData() {
-        // 1M & 5M data
         let p = price;
-        for(let i=0; i<40; i++) {
+        for(let i=0; i<60; i++) {
             p = Math.max(MIN, Math.min(MAX, p + (Math.random()-0.5)*3));
-            let c = {o:p, h:p+0.5, l:p-0.5, c:p};
-            data1m.push(c); if(i%5===0) data5m.push(c);
+            let c = {o:p, h:p+1, l:p-1, c:p};
+            data1m.push(c); if(i%5===0) data5m.push(c); if(i%15===0) dataDaily.push(c); if(i%30===0) dataWeekly.push(c);
         }
-        
-        // DAILY data (more history, larger moves)
-        p = price;
-        for(let i=0; i<30; i++) {
-            let open = p + (Math.random()-0.5)*5;
-            let close = open + (Math.random()-0.5)*10;
-            let high = Math.max(open, close) + Math.random()*5;
-            let low = Math.min(open, close) - Math.random()*5;
-            dataDaily.push({o:open, h:high, l:low, c:close});
-            p = close;
-        }
-
-        // WEEKLY data (even more history, even larger moves)
-        p = price;
-        for(let i=0; i<30; i++) {
-            let open = p + (Math.random()-0.5)*10;
-            let close = open + (Math.random()-0.5)*20;
-            let high = Math.max(open, close) + Math.random()*10;
-            let low = Math.min(open, close) - Math.random()*10;
-            dataWeekly.push({o:open, h:high, l:low, c:close});
-            p = close;
-        }
-
-        price = data1m[data1m.length-1].c; // Set current price to end of 1M history
-        candle1m = { o:price, h:price, l:price, c:price };
-        candle5m = { o:price, h:price, l:price, c:price };
     }
 
     function startGame() {
         userName = document.getElementById('user-name-input').value || "Trader";
         document.getElementById('player-name').innerText = `TRADER: ${userName}`;
         document.getElementById('start-overlay').style.display = 'none';
-        preGenerateData();
-        setInterval(updateMarket, 600); // 600ms per tick
+        preGenerateData(); setInterval(updateMarket, 600);
     }
 
     function updateMarket() {
+        if(hasWon) return;
         lastPrice = price;
-        price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*3));
+        price = Math.max(MIN, Math.min(MAX, price + (Math.random()-0.5)*3.5));
         tickCount++;
-
-        // Update 1M forming candle
         candle1m.h = Math.max(candle1m.h, price); candle1m.l = Math.min(candle1m.l, price); candle1m.c = price;
-
-        // Every 5 ticks = 1M candle finished
         if (tickCount % 5 === 0) {
             data1m.push({...candle1m}); if(data1m.length>30) data1m.shift();
-            // Update 5M forming candle based on finished 1M
             candle5m.h = Math.max(candle5m.h, candle1m.h); candle5m.l = Math.min(candle5m.l, candle1m.l); candle5m.c = candle1m.c;
-            if(tickCount === 5) candle5m.o = candle1m.o; // Set open for the first 1M part
-            candle1m = { o:price, h:price, l:price, c:price }; // Reset 1M
+            if(tickCount === 5) candle5m.o = candle1m.o;
+            candle1m = { o:price, h:price, l:price, c:price };
         }
-
-        // Every 25 ticks = 5M candle finished
-        if (tickCount % 25 === 0) {
-            data5m.push({...candle5m}); if(data5m.length>30) data5m.shift();
-            candle5m = { o:price, h:price, l:price, c:price }; // Reset 5M
-            tickCount = 0;
-        }
-        // Daily/Weekly do NOT update here (static background)
-
+        if (tickCount % 25 === 0) { data5m.push({...candle5m}); if(data5m.length>30) data5m.shift(); candle5m = { o:price, h:price, l:price, c:price }; tickCount = 0; }
         drawAllCharts(); drawBoard(); updateUI();
     }
 
-    function drawCandles(id, data, formingCandle = null) {
+    function drawCandles(id, data, forming = null) {
         const c = document.getElementById(id); const ctx = c.getContext('2d');
         const w = c.width = c.offsetWidth * 2; const h = c.height = c.offsetHeight * 2;
         ctx.scale(2,2); const cw = w/2, ch = h/2; ctx.clearRect(0,0,cw,ch);
-        
-        const drawData = [...data]; if(formingCandle) drawData.push(formingCandle);
+        const drawData = [...data]; if(forming) drawData.push(forming);
         if(drawData.length === 0) return;
-
-        // Calculate scale based on data range
-        let minVal = drawData[0].l, maxVal = drawData[0].h;
-        drawData.forEach(d => { minVal = Math.min(minVal, d.l); maxVal = Math.max(maxVal, d.h); });
-        const range = maxVal - minVal || 1;
-        const padding = range * 0.1; // Add padding
-        const getY = (val) => ch - ((val - (minVal - padding)) / (range + 2*padding)) * ch;
-
+        let minV = Math.min(...drawData.map(d=>d.l)), maxV = Math.max(...drawData.map(d=>d.h)), range = (maxV - minV) || 1;
+        const getY = (val) => ch - ((val - (minV - range*0.1)) / (range * 1.2)) * ch;
         const space = cw / 32;
         drawData.forEach((d, i) => {
             const x = i * space + space, up = d.c >= d.o, color = up ? '#ff3131' : '#00e676';
             ctx.strokeStyle = color; ctx.lineWidth = 1.2;
             ctx.beginPath(); ctx.moveTo(x, getY(d.h)); ctx.lineTo(x, getY(d.l)); ctx.stroke();
-            ctx.fillStyle = color;
-            const rectY = getY(Math.max(d.o, d.c)), rectH = Math.max(2, Math.abs(getY(d.o) - getY(d.c)));
-            ctx.fillRect(x - 3, rectY, 6, rectH);
+            ctx.fillStyle = color; ctx.fillRect(x - 3, getY(Math.max(d.o, d.c)), 6, Math.max(2, Math.abs(getY(d.o) - getY(d.c))));
         });
     }
 
-    function drawAllCharts() {
-        drawCandles('chart1m', data1m, candle1m);
-        drawCandles('chart5m', data5m, candle5m);
-        drawCandles('chartDaily', dataDaily);
-        drawCandles('chartWeekly', dataWeekly);
-    }
+    function drawAllCharts() { drawCandles('chart1m', data1m, candle1m); drawCandles('chart5m', data5m, candle5m); drawCandles('chartDaily', dataDaily); drawCandles('chartWeekly', dataWeekly); }
 
     function drawBoard() {
-        const askA = document.getElementById('ask-rows'), bidA = document.getElementById('bid-rows'), midA = document.getElementById('mid-val-display');
         let askH = '', bidH = '';
         for(let i=10; i>=1; i--) askH += `<div class="board-row"><span class="ask-price">${(price + i*0.1).toFixed(1)}</span><span style="color:#444">${Math.floor(Math.random()*900+50)}</span></div>`;
         for(let i=1; i<=10; i++) bidH += `<div class="board-row"><span class="bid-price">${(price - i*0.1).toFixed(1)}</span><span style="color:#444">${Math.floor(Math.random()*900+50)}</span></div>`;
-        askA.innerHTML = askH; bidA.innerHTML = bidH;
-        midA.innerText = price.toFixed(1); midA.style.color = price >= lastPrice ? 'var(--up)' : 'var(--down)';
-    }
-
-    function trade(type, amt) {
-        let qty = (amt === 'max') ? (type === 'buy' ? Math.floor(user.cash / price) : user.hold) : amt;
-        if (type === 'buy' && user.cash >= price * qty && qty > 0) { user.cash -= price * qty; user.hold += qty; }
-        else if (type === 'sell' && user.hold >= qty && qty > 0) { user.hold -= qty; user.cash += price * qty; }
-        updateUI();
+        document.getElementById('ask-rows').innerHTML = askH; document.getElementById('bid-rows').innerHTML = bidH;
+        const mv = document.getElementById('mid-val-display'); mv.innerText = price.toFixed(1); mv.style.color = price >= lastPrice ? 'var(--up)' : 'var(--down)';
     }
 
     function updateUI() {
@@ -254,19 +210,53 @@
         document.getElementById('total-val').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 1});
         document.getElementById('cash-val').innerText = (user.cash/1000).toFixed(1) + 'k';
         document.getElementById('hold-val').innerText = user.hold;
-        const allTraders = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
-        const myRank = allTraders.findIndex(t => t.me) + 1;
+        const all = [...worldTraders, {n: userName, a: total, me: true}].sort((a,b) => b.a - a.a);
+        const myRank = all.findIndex(t => t.me) + 1;
         document.getElementById('rank-display').innerText = `#${myRank} WORLD`;
-
-        if (myRank === 1 && !hasWon) {
-            hasWon = true;
-            document.getElementById('victory-overlay').style.display = 'flex';
-            document.getElementById('winner-name').innerText = userName;
-            confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 }, colors: ['#ffd700', '#ff8fab', '#ffffff'] });
-        }
-        let listH = ''; allTraders.forEach((l, i) => { listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
+        
+        if (myRank === 1 && !hasWon) triggerSovereignMode();
+        
+        let listH = ''; all.slice(0, 30).forEach((l, i) => { listH += `<div class="rank-row ${l.me?'me':''}"><span>${i+1}. ${l.n}</span><span>${Math.floor(l.a).toLocaleString()}</span></div>`; });
         document.getElementById('ranking-list').innerHTML = listH;
-        document.getElementById('s1').disabled = user.hold < 1; document.getElementById('smax').disabled = user.hold < 1;
+    }
+
+    function triggerSovereignMode() {
+        hasWon = true;
+        document.getElementById('shatter-overlay').classList.add('shatter-active');
+        setTimeout(() => {
+            document.getElementById('main-container').style.filter = 'blur(10px)';
+            document.getElementById('god-overlay').style.display = 'flex';
+            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+        }, 300);
+    }
+
+    const quotes = {
+        ascension: [
+            "True sovereignty is not in winning the game, but in writing the rules.",
+            "Markets are made by the daring, and inherited by the wise.",
+            "Greatness begins when you stop following the trend and start becoming it."
+        ],
+        judgment: [
+            "Even a king is a servant to time.",
+            "To reach the stars, one must first embrace the abyss.",
+            "Hubris is the tax paid by the powerful."
+        ]
+    };
+
+    function divineChoice(type) {
+        const isJudgment = (type === 'judgment');
+        document.getElementById('quote-screen').style.display = 'flex';
+        document.getElementById('quote-title').innerText = type.toUpperCase();
+        document.getElementById('quote-title').style.color = isJudgment ? 'var(--up)' : 'var(--gold)';
+        const pool = isJudgment ? quotes.judgment : quotes.ascension;
+        document.getElementById('quote-text').innerText = pool[Math.floor(Math.random()*pool.length)];
+    }
+
+    function trade(type, amt) {
+        let qty = (amt === 'max') ? (type === 'buy' ? Math.floor(user.cash / price) : user.hold) : amt;
+        if (type === 'buy' && user.cash >= price * qty && qty > 0) { user.cash -= price * qty; user.hold += qty; }
+        else if (type === 'sell' && user.hold >= qty && qty > 0) { user.hold -= qty; user.cash += price * qty; }
+        updateUI();
     }
 </script>
 </body>
