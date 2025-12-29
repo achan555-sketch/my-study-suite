@@ -5,29 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Ribbon Exchange: Sovereign v30</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
-        :root { --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0d0d0d; --card: #1a1a1a; --up: #ff3131; --down: #00e676; --text: #ffffff; --gold: #ffd700; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); }
-        .shatter-piece { position: fixed; background: rgba(255,255,255,0.9); z-index: 5000; pointer-events: none; }
-        #start-overlay, #god-overlay { position: fixed; inset: 0; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #start-overlay { background: #fff0f3; color: #5c4d50; }
-        #god-overlay { display: none; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 3000; border: 15px solid var(--gold); box-sizing: border-box; }
-        .god-btn { width: 280px; height: 180px; border: 4px solid var(--gold); background: transparent; color: white; font-family: 'Quicksand'; font-size: 1.8rem; font-weight: 700; cursor: pointer; border-radius: 25px; transition: 0.3s; margin: 0 25px; }
-        .god-btn:hover { background: var(--gold); color: black; transform: scale(1.1); box-shadow: 0 0 50px var(--gold); }
-        .quote-display { display: none; position: fixed; inset: 0; background: black; z-index: 4000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px; }
-        .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; transition: 0.5s; }
-        .left-panel { flex: 0 0 50%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
-        .chart-box { background: #000; border-radius: 12px; padding: 8px; border: 1px solid #333; position: relative; aspect-ratio: 1/1; }
-        .chart-label { color: #888; font-size: 0.6rem; font-weight: bold; position: absolute; top: 8px; left: 10px; z-index: 5; }
-        canvas { width: 100%; height: 100%; }
-        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-        .card { background: var(--card); border-radius: 15px; padding: 12px; border: 1px solid #333; }
-        .board-card { background: #000; font-family: 'Roboto Mono'; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; border: 2px solid #222; border-radius: 15px; }
-        .scroll-area { flex-grow: 1; overflow-y: auto; padding: 0 10px; scrollbar-width: none; }
-        .board-row { display: flex; justify-content: space-between; height: 18px; align-items: center; font-size: 0.85rem; }
-        .mid-price-line { background: #1a1a1a; text-align: center; padding: 8px; border-top: 1px solid #333; border-bottom: 1px solid #333; margin: 5px 0; font-weight: bold; font-size: 1.3rem; border-radius: 8px; }
-        .trade-card { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn { border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; color: white; font-family: 'Quicksand'; font-size: 1rem; }
+        /* 本格的な多角形の破片 */
+.shard {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    z-index: 5000;
+    pointer-events: none;
+}
+
+/* シミュレーション脱出画面 */
+#matrix-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    color: #00ff41; /* マトリックス・グリーン */
+    font-family: 'Roboto Mono', monospace;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10% 15%;
+    z-index: 6000;
+    font-size: 1.2rem;
+    line-height: 1.8;
+}
+
+.cursor { display: inline-block; width: 10px; height: 1.2rem; background: #00ff41; animation: blink 0.8s infinite; vertical-align: middle; margin-left: 5px; }
+@keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -217,110 +222,3 @@
 </script>
 </body>
 </html>
-
-/* 本格的な多角形の破片 */
-.shard {
-    position: fixed;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    z-index: 5000;
-    pointer-events: none;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* 菱形や三角形に */
-}
-
-/* シミュレーション脱出画面 */
-#matrix-screen {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    color: #00ff41; /* マトリックス・グリーン */
-    font-family: 'Roboto Mono', monospace;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    padding: 10% 15%;
-    z-index: 6000;
-    font-size: 1.2rem;
-    line-height: 1.8;
-}
-
-.cursor { display: inline-block; width: 10px; height: 1.2rem; background: #00ff41; animation: blink 0.8s infinite; vertical-align: middle; }
-@keyframes blink { 50% { opacity: 0; } }
-
-async function triggerSovereignMode() {
-    hasWon = true;
-
-    // 1. 本格的なパリーン！演出 (Shatter)
-    const container = document.body;
-    for (let i = 0; i < 50; i++) {
-        const shard = document.createElement('div');
-        shard.className = 'shard';
-        const size = Math.random() * 100 + 50;
-        shard.style.width = size + 'px';
-        shard.style.height = size + 'px';
-        shard.style.left = Math.random() * 100 + 'vw';
-        shard.style.top = Math.random() * 100 + 'vh';
-        
-        // ランダムな多角形にする
-        const p1 = Math.random()*100, p2 = Math.random()*100, p3 = Math.random()*100;
-        shard.style.clipPath = `polygon(${p1}% 0%, 100% ${p2}%, ${p3}% 100%, 0% 50%)`;
-        
-        container.appendChild(shard);
-        shard.animate([
-            { transform: 'translate(0,0) rotate(0deg) scale(1)', opacity: 1 },
-            { transform: `translate(${(Math.random()-0.5)*1500}px, ${(Math.random()-0.5)*1500}px) rotate(${Math.random()*1080}deg) scale(0)`, opacity: 0 }
-        ], { duration: 1200, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', fill: 'forwards' });
-    }
-    
-    playSound(150, 'sawtooth', 0.5); // 破壊音
-
-    // 2. シミュレーション脱出の開始
-    setTimeout(() => {
-        document.getElementById('main-container').style.display = 'none'; // 既存画面を消す
-        const matrix = document.createElement('div');
-        matrix.id = 'matrix-screen';
-        matrix.innerHTML = '<div id="terminal-text"></div><span class="cursor"></span>';
-        document.body.appendChild(matrix);
-        matrix.style.display = 'flex';
-        
-        runTerminalEffect(); // 文字打ち込み開始
-    }, 800);
-}
-
-// タイピング演出
-async function runTerminalEffect() {
-    const lines = [
-        "> Initializing system bypass...",
-        "> Security breach detected in Global Ribbon Market.",
-        "> Warning: Sovereign-level consciousness detected.",
-        "> [SYSTEM]: Simulation Loop #2025 terminated.",
-        "> Accessing higher reality database...",
-        "> Loading goals: [Jan 9 Exam: 100% Probability]", //
-        "> Loading assets: [USCPA Certification - Pending]", //
-        "> Loading project: [Notion Life Planner - Synced]", //
-        "> You are no longer a participant.",
-        "> You are the Architect.",
-        "> Click to take command."
-    ];
-    
-    const terminal = document.getElementById('terminal-text');
-    for (let line of lines) {
-        const p = document.createElement('p');
-        terminal.appendChild(p);
-        for (let char of line) {
-            p.textContent += char;
-            await new Promise(r => setTimeout(r, 40)); // 打ち込み速度
-        }
-        playSound(800, 'sine', 0.05); // ピッという打鍵音
-        await new Promise(r => setTimeout(r, 400));
-    }
-    
-    // 最後にクリックで「神のボタン」へ
-    document.getElementById('matrix-screen').onclick = () => {
-        document.getElementById('matrix-screen').style.display = 'none';
-        document.getElementById('god-overlay').style.display = 'flex';
-        // オーケストラ開始
-        [440, 554, 659].forEach((f, i) => setTimeout(() => playSound(f, 'sine', 1), i * 300));
-    };
-}
