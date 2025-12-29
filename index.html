@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 achan's Ultimate Study Suite 🎀</title>
+    <title>🎀 achan's Study Suite v4 🎀</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/light.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap');
 
@@ -17,70 +19,63 @@
         }
 
         body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: 'Quicksand', sans-serif; 
-            margin: 0; padding: 20px; 
-            display: flex; justify-content: center; 
-            background-image: radial-gradient(var(--pink-light) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: var(--bg); color: var(--text); font-family: 'Quicksand', sans-serif; 
+            margin: 0; padding: 20px; display: flex; justify-content: center; 
+            background-image: radial-gradient(var(--pink-light) 1px, transparent 1px); background-size: 20px 20px;
         }
 
         .wrapper { width: 100%; max-width: 500px; }
-
         header { text-align: center; margin-bottom: 30px; }
         h1 { font-weight: 700; letter-spacing: 2px; font-size: 1.6rem; color: var(--pink-dark); margin: 0; }
-        .ribbon-icon { font-size: 2rem; display: block; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
+        .ribbon-icon { font-size: 2.2rem; display: block; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 50% { transform: translateY(-8px); } }
 
         .exam-card { 
-            background: var(--card); border-radius: 30px; padding: 25px; 
-            box-shadow: 0 10px 25px rgba(255, 143, 171, 0.2); 
-            margin-bottom: 25px; border: 3px solid var(--pink-light);
-            position: relative;
+            background: var(--card); border-radius: 35px; padding: 25px; 
+            box-shadow: 0 15px 35px rgba(255, 143, 171, 0.15); 
+            margin-bottom: 30px; border: 3px solid var(--pink-light); position: relative;
         }
 
         .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .exam-title { font-size: 1.2rem; font-weight: 700; color: var(--pink-dark); }
-        .countdown { font-size: 0.75rem; background: var(--pink-light); color: var(--pink-dark); padding: 5px 12px; border-radius: 20px; font-weight: bold; }
+        .exam-title { font-size: 1.3rem; font-weight: 700; color: var(--pink-dark); }
+        .countdown { font-size: 0.75rem; background: var(--pink-light); color: var(--pink-dark); padding: 6px 15px; border-radius: 20px; font-weight: bold; }
 
-        /* Master Progress Bar */
-        .overall-section { margin-bottom: 25px; padding: 15px; background: #fff9fa; border-radius: 20px; }
-        .bar-outer { background: var(--pink-light); height: 14px; border-radius: 10px; overflow: hidden; }
-        .bar-inner { background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); height: 100%; width: 0%; transition: 0.8s ease; }
+        .reward-tag { font-size: 0.8rem; background: #fff9fa; padding: 8px 15px; border-radius: 15px; margin-bottom: 20px; display: block; color: var(--pink-main); border: 1px dashed var(--pink-main); }
 
-        /* Task Item */
-        .task-item { margin-top: 15px; padding: 15px; border: 1px dashed var(--pink-main); border-radius: 20px; position: relative; }
-        .task-info { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
-        
-        /* Interactive Slider */
-        input[type="range"] {
-            -webkit-appearance: none; width: 100%; background: transparent; margin: 10px 0;
-        }
+        /* Progress UI */
+        .overall-section { margin-bottom: 25px; padding: 20px; background: #fffcfd; border-radius: 25px; border: 1px solid var(--pink-light); }
+        .bar-outer { background: var(--pink-light); height: 16px; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .bar-inner { background: linear-gradient(90deg, var(--pink-main), var(--pink-dark)); height: 100%; width: 0%; transition: 1s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+
+        /* Task Item Styles */
+        .task-item { margin-top: 20px; padding: 20px; background: white; border-radius: 25px; border: 2px solid var(--pink-light); position: relative; }
+        .percent-badge { position: absolute; top: -12px; right: 15px; background: var(--pink-dark); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 4px 10px rgba(251, 111, 146, 0.3); }
+        .task-name { font-weight: 700; font-size: 0.9rem; color: var(--text); display: block; margin-bottom: 10px; }
+
+        /* Optimized Slider (Easier to touch/slide) */
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 40px; cursor: pointer; }
         input[type="range"]:focus { outline: none; }
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%; height: 10px; cursor: pointer; background: var(--pink-light); border-radius: 5px;
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 12px; background: var(--pink-light); border-radius: 10px; }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; height: 32px; width: 32px; border-radius: 50%; 
+            background: var(--pink-dark); cursor: pointer; margin-top: -10px; 
+            border: 4px solid white; box-shadow: 0 4px 12px rgba(251, 111, 146, 0.4); transition: transform 0.2s;
         }
-        input[type="range"]::-webkit-slider-thumb {
-            height: 20px; width: 20px; border-radius: 50%; background: var(--pink-dark);
-            cursor: pointer; -webkit-appearance: none; margin-top: -5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid white;
-        }
+        input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
 
-        .controls { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
-        .btn-small { background: var(--pink-light); color: var(--pink-dark); border: none; padding: 5px 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.8rem; }
-        .btn-small:hover { background: var(--pink-main); color: white; }
-        .num-input { width: 45px; border: 1px solid var(--pink-light); text-align: center; border-radius: 8px; font-family: 'Quicksand'; font-weight: 700; color: var(--pink-dark); }
+        .controls { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 10px; }
+        .btn-round { background: var(--pink-light); color: var(--pink-dark); border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: 700; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
+        .btn-round:hover { background: var(--pink-main); color: white; }
+        .num-display { font-size: 0.9rem; font-weight: 700; color: var(--pink-dark); min-width: 80px; text-align: center; }
 
         /* Add Zone */
-        .add-zone { background: white; padding: 25px; border-radius: 30px; border: 2px solid var(--pink-light); text-align: center; }
-        input[type="text"], input[type="date"] { width: 100%; padding: 12px; border-radius: 15px; border: 2px solid var(--pink-light); margin-bottom: 10px; box-sizing: border-box; font-family: 'Quicksand'; }
-        .btn-main { background: var(--pink-dark); color: white; padding: 15px; border-radius: 20px; font-weight: 700; width: 100%; border: none; cursor: pointer; font-size: 1rem; box-shadow: 0 5px 15px rgba(251, 111, 146, 0.3); }
+        .add-zone { background: white; padding: 30px; border-radius: 35px; border: 3px solid var(--pink-light); margin-top: 40px; }
+        label { font-size: 0.8rem; font-weight: 700; color: var(--pink-dark); margin: 10px 0 5px 10px; display: block; }
+        input[type="text"], .date-input { width: 100%; padding: 15px; border-radius: 20px; border: 2px solid var(--pink-light); margin-bottom: 15px; box-sizing: border-box; font-family: 'Quicksand'; outline: none; font-size: 0.9rem; }
+        .btn-main { background: var(--pink-dark); color: white; padding: 18px; border-radius: 25px; font-weight: 700; width: 100%; border: none; cursor: pointer; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(251, 111, 146, 0.3); transition: 0.3s; }
+        .btn-main:hover { transform: translateY(-3px); filter: brightness(1.05); }
 
-        .delete-link { font-size: 0.7rem; color: #ccc; cursor: pointer; text-decoration: underline; margin-top: 10px; display: inline-block; }
+        .remove-btn { color: #ccc; font-size: 0.7rem; cursor: pointer; text-decoration: underline; margin-top: 20px; display: block; text-align: center; }
     </style>
 </head>
 <body>
@@ -89,63 +84,82 @@
     <header>
         <span class="ribbon-icon">🎀</span>
         <h1>My Study Dashboard</h1>
-        <p style="opacity:0.6; font-size:0.8rem;">Global & School Goals</p>
     </header>
 
     <div id="dashboard"></div>
 
     <div class="add-zone">
-        <h3 style="color:var(--pink-dark); margin-top:0;">✨ Add New Subject ✨</h3>
-        <input type="text" id="new-name" placeholder="Subject / Exam Name">
-        <input type="date" id="new-date">
-        <button class="btn-main" onclick="addProject()">Create Goal 🎀</button>
+        <h3 style="text-align:center; color:var(--pink-dark); margin-top:0;">✨ New Mission ✨</h3>
+        <label>Subject or Exam Name</label>
+        <input type="text" id="new-name" placeholder="e.g. FAR, Boki 2, School Test">
+        
+        <label>Deadline (English Calendar!)</label>
+        <input type="text" id="new-date" class="date-input" placeholder="Select Target Date">
+
+        <label>Sweet Reward 🎁</label>
+        <input type="text" id="new-reward" placeholder="e.g. Favorite cake, Shopping!">
+
+        <button class="btn-main" onclick="addProject()">Let's Start! 🎀</button>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
-    let projects = JSON.parse(localStorage.getItem('achan_ultimate_pink')) || [];
+    flatpickr("#new-date", { dateFormat: "Y-m-d", minDate: "today", disableMobile: true });
+
+    let projects = JSON.parse(localStorage.getItem('achan_kawaii_v4')) || [];
 
     function save() {
-        localStorage.setItem('achan_ultimate_pink', JSON.stringify(projects));
+        localStorage.setItem('achan_kawaii_v4', JSON.stringify(projects));
         render();
     }
 
     function addProject() {
         const name = document.getElementById('new-name').value;
         const date = document.getElementById('new-date').value;
-        if (!name || !date) return alert("Please fill in everything! 🎀");
+        const reward = document.getElementById('new-reward').value || "Treat yourself!";
+        if (!name || !date) return alert("Please fill in the details! 🌸");
         
         projects.push({
             id: Date.now(),
-            name: name,
-            date: date,
+            name, date, reward,
             tasks: [
-                { id: 1, name: "Practice Questions", current: 0, goal: 100 },
-                { id: 2, name: "Chapters / Pages", current: 0, goal: 10 }
+                { id: 1, name: "MCQ / Exercises", current: 0, goal: 100 },
+                { id: 2, name: "Textbook / Chapters", current: 0, goal: 10 }
             ]
         });
         save();
         document.getElementById('new-name').value = '';
+        document.getElementById('new-reward').value = '';
     }
 
     function updateValue(projId, taskId, val) {
         const proj = projects.find(p => p.id === projId);
         const task = proj.tasks.find(t => t.id === taskId);
+        const oldP = Math.round((task.current / task.goal) * 100);
+        
         task.current = Math.max(0, Math.min(task.goal, parseInt(val) || 0));
+        
+        const newP = Math.round((task.current / task.goal) * 100);
+        if (newP === 100 && oldP < 100) {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff8fab', '#fb6f92', '#ffffff'] });
+        }
         save();
     }
 
     function addTask(projId) {
-        const name = prompt("Task Name? (e.g., Assignment, Mock Exam)");
-        const goal = prompt("Total Goal? (Number)");
-        if (!name || !goal) return;
-        const proj = projects.find(p => p.id === projId);
-        proj.tasks.push({ id: Date.now(), name, current: 0, goal: parseInt(goal) });
-        save();
+        const name = prompt("Task Name?");
+        const goal = prompt("Goal Number?");
+        if (name && goal) {
+            projects.find(p => p.id === projId).tasks.push({ id: Date.now(), name, current: 0, goal: parseInt(goal) });
+            save();
+        }
     }
 
     function deleteProject(id) {
-        if (confirm("Delete this subject? 🌸")) {
+        if (confirm("Delete this goal? 🌸")) {
             projects = projects.filter(p => p.id !== id);
             save();
         }
@@ -156,8 +170,7 @@
         container.innerHTML = '';
 
         projects.forEach(proj => {
-            const diff = Math.ceil((new Date(proj.date) - new Date()) / (1000*60*60*24));
-            const daysLeft = diff > 0 ? diff : 0;
+            const daysLeft = Math.max(0, Math.ceil((new Date(proj.date) - new Date()) / (86400000)));
 
             let taskHtml = '';
             let totalCur = 0, totalGoal = 0;
@@ -165,45 +178,43 @@
             proj.tasks.forEach(task => {
                 totalCur += task.current;
                 totalGoal += task.goal;
-                const percent = Math.round((task.current / task.goal) * 100) || 0;
+                const p = Math.round((task.current / task.goal) * 100) || 0;
                 taskHtml += `
                     <div class="task-item">
-                        <div class="task-info">
-                            <span>${task.name} 🎀</span>
-                            <span>${task.current} / ${task.goal} (${percent}%)</span>
-                        </div>
+                        <span class="percent-badge">${p}% Done</span>
+                        <span class="task-name">${task.name} 🎀</span>
                         <input type="range" min="0" max="${task.goal}" value="${task.current}" 
                                oninput="updateValue(${proj.id}, ${task.id}, this.value)">
                         <div class="controls">
-                            <button class="btn-small" onclick="updateValue(${proj.id}, ${task.id}, ${task.current - 1})">-1</button>
-                            <input class="num-input" type="number" value="${task.current}" 
-                                   onchange="updateValue(${proj.id}, ${task.id}, this.value)">
-                            <button class="btn-small" onclick="updateValue(${proj.id}, ${task.id}, ${task.current + 1})">+1</button>
+                            <button class="btn-round" onclick="updateValue(${proj.id}, ${task.id}, ${task.current - 1})">-</button>
+                            <span class="num-display">${task.current} / ${task.goal}</span>
+                            <button class="btn-round" onclick="updateValue(${proj.id}, ${task.id}, ${task.current + 1})">+</button>
                         </div>
                     </div>
                 `;
             });
 
-            const overallPercent = totalGoal > 0 ? Math.round((totalCur / totalGoal) * 100) : 0;
+            const overallP = totalGoal > 0 ? Math.round((totalCur / totalGoal) * 100) : 0;
 
             const card = document.createElement('div');
             card.className = 'exam-card';
             card.innerHTML = `
                 <div class="exam-header">
                     <div class="exam-title">${proj.name}</div>
-                    <span class="countdown">✨ ${daysLeft} Days ✨</span>
+                    <span class="countdown">✨ ${daysLeft} Days left</span>
                 </div>
+                <div class="reward-tag">🎁 Reward: ${proj.reward}</div>
                 <div class="overall-section">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:8px; color:var(--pink-dark);">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; color:var(--pink-dark);">
                         <span>Overall Progress</span>
-                        <span>${overallPercent}%</span>
+                        <span>${overallP}%</span>
                     </div>
-                    <div class="bar-outer"><div class="bar-inner" style="width:${overallPercent}%"></div></div>
+                    <div class="bar-outer"><div class="bar-inner" style="width:${overallP}%"></div></div>
                 </div>
-                <div class="task-list">${taskHtml}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-                    <button class="btn-add-task" onclick="addTask(${proj.id})">+ Add Task</button>
-                    <span class="delete-link" onclick="deleteProject(${proj.id})">remove subject</span>
+                <div>${taskHtml}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:25px;">
+                    <button class="btn-round" style="width:auto; padding:0 15px; border-radius:15px; font-size:0.75rem; background:var(--pink-dark); color:white;" onclick="addTask(${proj.id})">+ Add Task</button>
+                    <span class="remove-btn" onclick="deleteProject(${proj.id})">remove goal</span>
                 </div>
             `;
             container.appendChild(card);
@@ -212,6 +223,5 @@
 
     render();
 </script>
-
 </body>
 </html>
