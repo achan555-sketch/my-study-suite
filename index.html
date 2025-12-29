@@ -3,90 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 GRX Pro: Pure Trading v14 🎀</title>
+    <title>🎀 GRX Pro: Balanced Trader v15 🎀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Roboto+Mono:wght@500;700&display=swap');
         :root { 
-            --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0a0a0a; --card: #151515;
-            --up: #ff3131; /* 超鮮明な赤 */
-            --down: #00e676; /* 超鮮明な緑 */
-            --text: #ffffff;
-            --grid: #2a2a2a;
+            --p-light: #ffe5ec; --p-main: #ff8fab; --p-dark: #fb6f92; --bg: #0a0a0a; --card: #1a1a1a;
+            --up: #ff3131; --down: #00e676; --text: #ffffff;
         }
         
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); }
         
         /* Start Screen */
         #start-overlay { position: fixed; inset: 0; background: #fff0f3; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #5c4d50; }
-        .input-name { padding: 18px; border-radius: 20px; border: 4px solid var(--p-light); width: 320px; font-size: 1.4rem; text-align: center; margin-bottom: 25px; outline: none; font-family: 'Quicksand'; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .start-btn { background: var(--p-dark); color: white; border: none; padding: 15px 50px; border-radius: 20px; cursor: pointer; font-weight: 700; font-family: 'Quicksand'; font-size: 1.2rem; transition: 0.3s; box-shadow: 0 8px 20px rgba(251, 111, 146, 0.3); }
-        .start-btn:hover { transform: scale(1.05); background: #ff4d6d; }
+        .input-name { padding: 18px; border-radius: 20px; border: 4px solid var(--p-light); width: 320px; font-size: 1.5rem; text-align: center; margin-bottom: 25px; outline: none; }
+        .start-btn { background: var(--p-dark); color: white; border: none; padding: 15px 60px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 1.5rem; transition: 0.3s; }
 
-        .main-container { display: flex; width: 100vw; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; }
+        /* Main Grid: 50% | 50% */
+        .main-container { display: flex; width: 100vw; height: 100vh; padding: 15px; box-sizing: border-box; gap: 15px; }
         
-        /* LEFT: Charts */
-        .left-panel { flex: 0 0 65%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
-        .chart-box { background: #000; border-radius: 15px; padding: 10px; border: 2px solid #333; display: flex; flex-direction: column; position: relative; aspect-ratio: 1 / 1; }
-        .chart-label { color: #aaa; font-size: 0.7rem; font-weight: bold; position: absolute; top: 12px; left: 15px; z-index: 5; text-shadow: 0 0 5px black; }
+        /* LEFT: Charts (Reduced Size) */
+        .left-panel { flex: 0 0 50%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
+        .chart-box { background: #000; border-radius: 15px; padding: 10px; border: 2px solid #333; display: flex; flex-direction: column; position: relative; }
+        .chart-label { color: #888; font-size: 0.7rem; font-weight: bold; position: absolute; top: 10px; left: 12px; z-index: 5; }
         canvas { width: 100%; height: 100%; border-radius: 8px; }
 
-        /* RIGHT: Control Panel */
-        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
-        .card { background: var(--card); border-radius: 20px; padding: 15px; border: 1px solid #333; }
+        /* RIGHT: Control Panel (Enlarged) */
+        .right-panel { flex: 0 0 50%; display: flex; flex-direction: column; gap: 15px; overflow: hidden; }
+        .card { background: var(--card); border-radius: 25px; padding: 20px; border: 1px solid #333; }
         
-        .stats-card { text-align: center; border-top: 5px solid var(--p-main); }
-        .total-asset { font-size: 1.8rem; font-weight: 700; color: var(--p-main); font-family: 'Roboto Mono'; }
-        .rank-badge { display: inline-block; padding: 3px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; color: white; margin-top: 5px; }
+        /* Asset Area */
+        .stats-card { text-align: center; border-left: 8px solid var(--p-main); }
+        .total-asset { font-size: 2.5rem; font-weight: 700; color: var(--p-main); font-family: 'Roboto Mono'; }
+        .rank-badge { display: inline-block; padding: 5px 20px; border-radius: 12px; font-size: 0.9rem; font-weight: bold; color: white; margin-top: 10px; text-transform: uppercase; }
 
-        /* Order Book (High Contrast) */
-        .board-card { background: #000; font-family: 'Roboto Mono'; font-size: 0.75rem; flex-grow: 1; display: flex; flex-direction: column; padding: 12px; overflow: hidden; border: 2px solid #222; }
-        .board-header { display: flex; justify-content: space-between; color: #666; font-size: 0.65rem; border-bottom: 1px solid #222; padding-bottom: 5px; margin-bottom: 5px; }
-        .board-row { display: flex; justify-content: space-between; height: 18px; align-items: center; }
+        /* Order Book (Now Massive) */
+        .board-card { background: #000; font-family: 'Roboto Mono'; font-size: 1rem; flex-grow: 1; display: flex; flex-direction: column; padding: 15px; overflow: hidden; border: 3px solid #222; border-radius: 25px; }
+        .board-header { display: flex; justify-content: space-between; color: #555; font-size: 0.8rem; border-bottom: 2px solid #222; padding-bottom: 8px; margin-bottom: 10px; }
+        .board-row { display: flex; justify-content: space-between; height: 26px; align-items: center; }
         .ask-price { color: var(--up); font-weight: bold; }
         .bid-price { color: var(--down); font-weight: bold; }
-        .mid-price-line { background: #1a1a1a; text-align: center; padding: 8px; border: 1px solid #333; margin: 6px 0; font-weight: bold; color: white; font-size: 1.1rem; border-radius: 10px; }
+        .mid-price-line { background: #1a1a1a; text-align: center; padding: 12px; border: 1px solid #444; margin: 10px 0; font-weight: bold; color: white; font-size: 1.5rem; border-radius: 15px; }
 
-        /* Trade Controls */
-        .trade-card { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn { border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; color: white; font-family: 'Quicksand'; font-size: 0.9rem; transition: 0.1s; }
-        .btn:active { transform: translateY(2px); }
-        .btn-buy { background: var(--up); }
-        .btn-sell { background: var(--down); }
-        .btn-max { background: #333; color: #999; grid-column: span 2; padding: 8px; font-size: 0.75rem; }
+        /* Trade Controls (Powerful Buttons) */
+        .trade-card { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn { border: none; padding: 20px; border-radius: 18px; font-weight: 700; cursor: pointer; color: white; font-family: 'Quicksand'; font-size: 1.2rem; transition: 0.1s; }
+        .btn:active { transform: scale(0.95); }
+        .btn-buy { background: var(--up); box-shadow: 0 5px 0 #b32121; }
+        .btn-sell { background: var(--down); box-shadow: 0 5px 0 #009e51; }
+        .btn-max { background: #333; color: #fff; grid-column: span 1; padding: 10px; font-size: 0.8rem; }
 
-        /* Ranking */
-        .ranking-card { font-size: 0.7rem; background: #0a0a0a; max-height: 150px; overflow: hidden; }
-        .rank-row { display: flex; justify-content: space-between; padding: 5px 8px; border-bottom: 1px solid #222; }
-        .rank-row.me { background: rgba(255, 143, 171, 0.25); color: var(--p-main); font-weight: bold; border-radius: 6px; }
+        /* Ranking (Clean & Visible) */
+        .ranking-card { font-size: 0.9rem; background: #111; border-radius: 25px; }
+        .rank-row { display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #222; }
+        .rank-row.me { background: rgba(255, 143, 171, 0.3); color: var(--p-main); font-weight: bold; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div id="start-overlay">
-    <span style="font-size:4rem;">🎀</span>
-    <h1 style="color:var(--p-dark); margin-top:0;">Global Ribbon Exchange Pro</h1>
-    <p style="opacity:0.6;">The World's Best Day Trading Simulator</p>
-    <input type="text" id="user-name-input" class="input-name" placeholder="Your Trader Name" maxlength="10">
-    <button class="start-btn" onclick="startGame()">START TRADING 🚀</button>
+    <span style="font-size:5rem;">🎀</span>
+    <h1 style="color:var(--p-dark); margin-bottom: 30px;">GLOBAL RIBBON EXCHANGE</h1>
+    <input type="text" id="user-name-input" class="input-name" placeholder="Enter Your Name" maxlength="10">
+    <button class="start-btn" onclick="startGame()">ENTER MARKET 🚀</button>
 </div>
 
 <div class="main-container">
     <div class="left-panel">
-        <div class="chart-box"><span class="chart-label">5M (ENTRY)</span><canvas id="chart5m"></canvas></div>
-        <div class="chart-box"><span class="chart-label">1H (SHORT)</span><canvas id="chart1h"></canvas></div>
-        <div class="chart-box"><span class="chart-label">DAILY (MID)</span><canvas id="chartDaily"></canvas></div>
-        <div class="chart-box"><span class="chart-label">WEEKLY (LONG)</span><canvas id="chartWeekly"></canvas></div>
+        <div class="chart-box"><span class="chart-label">5M ENTRY</span><canvas id="chart5m"></canvas></div>
+        <div class="chart-box"><span class="chart-label">1H SHORT</span><canvas id="chart1h"></canvas></div>
+        <div class="chart-box"><span class="chart-label">DAILY MID</span><canvas id="chartDaily"></canvas></div>
+        <div class="chart-box"><span class="chart-label">WEEKLY LONG</span><canvas id="chartWeekly"></canvas></div>
     </div>
 
     <div class="right-panel">
         <div class="card stats-card">
-            <div id="player-name" style="font-size:0.8rem; font-weight:700;">TRADER: achan</div>
-            <div class="total-asset"><span id="total-val">100,000</span> <small style="font-size:0.7rem; opacity:0.5;">GRB</small></div>
+            <div id="player-name" style="font-size:1rem; font-weight:700; opacity:0.6;">TRADER: achan</div>
+            <div class="total-asset"><span id="total-val">100,000</span> <small style="font-size:1rem; opacity:0.5;">GRB</small></div>
             <div id="rank-display" class="rank-badge">BRONZE</div>
         </div>
 
         <div class="card board-card">
-            <div class="board-header"><span>PRICE (GRB)</span><span>QTY</span></div>
+            <div class="board-header"><span>ORDER PRICE</span><span>QUANTITY</span></div>
             <div id="ask-rows"></div>
             <div class="mid-price-line">LAST: <span id="mid-val">100.00</span></div>
             <div id="bid-rows"></div>
@@ -95,15 +92,16 @@
         <div class="card trade-card">
             <button class="btn btn-buy" onclick="trade('buy', 1)">BUY 1</button>
             <button class="btn btn-sell" id="s1" onclick="trade('sell', 1)">SELL 1</button>
-            <button class="btn btn-max" onclick="trade('buy','max')">MAX BUY (ALL IN)</button>
-            <button class="btn btn-max" id="smax" onclick="trade('sell','max')">MAX SELL (EXIT)</button>
-            <div style="grid-column: span 2; font-size:0.7rem; display:flex; justify-content:space-between; margin-top:5px; font-family:'Roboto Mono'; opacity:0.7;">
+            <button class="btn btn-max btn-buy" onclick="trade('buy','max')">ALL IN (BUY MAX)</button>
+            <button class="btn btn-max btn-sell" id="smax" onclick="trade('sell','max')">EXIT (SELL ALL)</button>
+            <div style="grid-column: span 2; font-size:0.9rem; display:flex; justify-content:space-between; margin-top:5px; font-family:'Roboto Mono';">
                 <span>CASH: <span id="cash-val">100.0k</span></span>
                 <span>HOLD: <span id="hold-val">0</span></span>
             </div>
         </div>
 
         <div class="card ranking-card">
+            <div style="font-weight:700; color:var(--p-main); margin-bottom:10px; font-size:1rem; padding-left:10px;">🌍 TOP TRADERS</div>
             <div id="ranking-list"></div>
         </div>
     </div>
@@ -154,7 +152,6 @@
         const cw = w/2, ch = h/2;
         ctx.clearRect(0,0,cw,ch);
         
-        // Grid lines (more visible)
         ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 1;
         for(let i=1; i<8; i++) {
             let y = (ch / 8) * i;
@@ -167,17 +164,13 @@
         data.forEach((d, i) => {
             const x = i * space + space;
             const up = d.c >= d.o;
-            const color = up ? '#ff3131' : '#00e676'; // High Contrast Red/Green
-            
-            // Wick
+            const color = up ? '#ff3131' : '#00e676';
             ctx.strokeStyle = color; ctx.lineWidth = 1.5;
             ctx.beginPath(); ctx.moveTo(x, getY(d.h)); ctx.lineTo(x, getY(d.l)); ctx.stroke();
-            
-            // Body
             ctx.fillStyle = color;
             const rectY = getY(Math.max(d.o, d.c));
             const rectH = Math.max(3, Math.abs(getY(d.o) - getY(d.c)));
-            ctx.fillRect(x - 4, rectY, 8, rectH);
+            ctx.fillRect(x - 5, rectY, 10, rectH);
         });
     }
 
@@ -188,13 +181,13 @@
 
     function drawBoard() {
         let askH = '', bidH = '';
-        for(let i=8; i>=1; i--) {
-            let p = (price + i*0.15).toFixed(2);
+        for(let i=6; i>=1; i--) {
+            let p = (price + i*0.25).toFixed(2);
             let q = Math.floor(Math.random()*900 + 100);
             askH += `<div class="board-row"><span class="ask-price">${p}</span><span>${q}</span></div>`;
         }
-        for(let i=1; i<=8; i++) {
-            let p = (price - i*0.15).toFixed(2);
+        for(let i=1; i<=6; i++) {
+            let p = (price - i*0.25).toFixed(2);
             let q = Math.floor(Math.random()*900 + 100);
             bidH += `<div class="board-row"><span class="bid-price">${p}</span><span>${q}</span></div>`;
         }
@@ -229,7 +222,7 @@
         rEl.innerText = rank; rEl.style.background = color;
 
         const leaders = [
-            {n: "Elon Musk 🚀", a: 21000000}, {n: "Warren Buffett 📉", a: 15000000},
+            {n: "Elon Musk 🚀", a: 21000000}, {n: "Warren Buffett 📈", a: 15000000},
             {n: "Jeff Bezos 📦", a: 9500000}, {n: userName, a: total, me: true}, {n: "Jensen Huang 🤖", a: 450000}
         ].sort((a,b) => b.a - a.a);
 
